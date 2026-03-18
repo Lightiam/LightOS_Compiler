@@ -76,6 +76,9 @@ class CompileOptions:
     # Stage 6 opts
     mode:               str  = "jit"   # "jit" | "aot"
     debug:              bool = False
+    # Intelligence Stack opts
+    enable_tar:         bool = True    # Topology-Aware Router
+    enable_math_sched:  bool = True    # Mathematical Scheduler
 
 
 # ---------------------------------------------------------------------------
@@ -102,6 +105,22 @@ class CompilationResult:
             lines.append(f"Fat binary size: {len(self.fat_binary_bytes)} bytes")
         if self.aot_binary:
             lines.append(f"AOT binary: {len(self.aot_binary.npu_code)} bytes NPU code")
+        # Intelligence Stack metadata
+        fp = self.module.metadata.get("topology_fingerprint")
+        if fp:
+            lines.append(f"Topology fingerprint: {fp[:24]}...")
+        if self.module.metadata.get("mathematically_optimal"):
+            lines.append("Routing: mathematically optimal (Dijkstra TAR)")
+        solver = None
+        for fn in self.module.device_functions():
+            sr = fn.attrs.get("scheduling_result")
+            if sr:
+                solver = sr.solver_used
+                break
+        if solver:
+            lines.append(f"Scheduler: {solver}")
+        if self.module.metadata.get("workload_partitioned"):
+            lines.append("Workload: partitioned across NCE tiles")
         if self.stage_times:
             lines.append("Stage timings (ms):")
             for stage, t in self.stage_times.items():
@@ -212,6 +231,16 @@ class CompilationPipeline:
         mapper = WavelengthMapper(num_channels=opts.num_wdm_channels)
         timed("4_wdm_map",       lambda: mapper.run(module))
         timed("4_routing",       lambda: DataflowRouter().run(module))
+
+        # Intelligence Stack — Topology-Aware Router (replaces heuristic routing)
+        if opts.enable_tar:
+            from lightrail.topology.aware_router import TopologyAwareRouter
+            timed("4_tar",       lambda: TopologyAwareRouter().run(module))
+
+        # Intelligence Stack — Mathematical Scheduler (replaces greedy WDM assignment)
+        if opts.enable_math_sched:
+            from lightrail.scheduler.math_scheduler import MathematicalScheduler
+            timed("4_math_sched", lambda: MathematicalScheduler().run(module))
 
         # Stage 5: Bytecode + Fat Binary
         emitter = BytecodeEmitter()

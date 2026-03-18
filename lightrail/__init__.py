@@ -1,8 +1,16 @@
 """
-LightRail Photonic Compiler
-============================
+LightRail Photonic Compiler  —  LightOS AI Compiler
+=====================================================
 A 6-stage compiler for the LightRail Neural Compute Engine (NCE) and its
-20-layer photonic fabric interconnects.
+20-layer photonic fabric interconnects, incorporating the full LightRail
+Intelligence Stack (LRIS):
+
+  - Topology-Aware Router  : Mathematically provable Dijkstra routing with
+                             unique Topology Fingerprints per fabric state.
+  - Mathematical Scheduler : Hungarian / critical-path optimal WDM assignment.
+  - Workload Partitioner   : Splits AI models across 20 NCE fabric tiles.
+  - Framework Adapters     : PyTorch and JAX graph ingestion.
+  - 6-Stage Pipeline       : Parse → Lower → Optimise → Map → Bytecode → Run.
 
 Quick start:
     import lightrail
@@ -16,13 +24,11 @@ Quick start:
 
     result = dot_product(a_buf, b_buf, 1024)
 
-Pipeline stages:
-  1. AST Parsing & High-Level IR
-  2. Type Inference & Lowering
-  3. Photonic-Aware Optimisation (FMA, Loop Splitting, Graph Partitioning)
-  4. Dataflow & WDM Channel Mapping (replaces CUDA thread scheduling)
-  5. Tile Bytecode & Fat Binary Generation (.lrbs / .lrfat)
-  6. Execution & Fabric OS Handoff (AOT or JIT)
+Full Intelligence Stack:
+    stack = lightrail.IntelligenceStack()
+    result = stack.compile_function(my_fn)
+    bench  = stack.benchmark(my_fn)
+    print(bench.summary())
 """
 
 from lightrail.decorators import jit, LightRailKernel
@@ -34,7 +40,21 @@ from lightrail.ir import (
 )
 from lightrail.runtime import AOTCompiler, JITRunner, get_default_scheduler
 
-__version__ = "0.1.0"
+# Intelligence Stack
+from lightrail.intelligence.stack import (
+    LightRailIntelligenceStack as IntelligenceStack,
+    IntelligenceStackConfig,
+    BenchmarkResult,
+)
+from lightrail.topology import (
+    TopologyAwareRouter,
+    TopologyFingerprint,
+    FabricTopologyState,
+)
+from lightrail.scheduler import MathematicalScheduler
+from lightrail.adapters import get_adapter, PyTorchAdapter, JAXAdapter
+
+__version__ = "0.2.0"
 __author__  = "LightRail Compiler Team"
 
 __all__ = [
@@ -45,6 +65,20 @@ __all__ = [
     "CompilationPipeline",
     "CompileOptions",
     "CompilationResult",
+    # Intelligence Stack
+    "IntelligenceStack",
+    "IntelligenceStackConfig",
+    "BenchmarkResult",
+    # Topology
+    "TopologyAwareRouter",
+    "TopologyFingerprint",
+    "FabricTopologyState",
+    # Scheduler
+    "MathematicalScheduler",
+    # Framework Adapters
+    "get_adapter",
+    "PyTorchAdapter",
+    "JAXAdapter",
     # IR types
     "Module", "Function", "BasicBlock", "Builder",
     "INT8", "INT16", "INT32", "INT64",
