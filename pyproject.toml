@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lightrail-compiler"
+version = "0.1.0"
+description = "LightRail Photonic Compiler for the Neural Compute Engine (NCE)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    "numpy>=1.24",
+    "networkx>=3.0",
+    "rich>=13.0",
+    "click>=8.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "mypy>=1.5",
+    "ruff>=0.1",
+]
+
+[project.scripts]
+lrc = "lightrail.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["lightrail*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
