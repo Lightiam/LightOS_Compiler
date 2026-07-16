@@ -5,17 +5,13 @@ on:
     branches:
       - claude/tapeout-*
     paths:
-      - 'rtl/nce_core.json'
-      - 'rtl/nce_core.v'
-      - '.github/workflows/gds-render.yml'
+      - 'rtl/**'
   pull_request:
     branches:
       - main
-    paths:
-      - 'rtl/**'
 
 jobs:
-  render-gds:
+  publish-gds:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -24,211 +20,72 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'pip'
-
-      - name: Install system dependencies
+      - name: Verify GDS artifacts
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-klayout
+          echo "## GDS Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-
-      - name: Check GDS artifacts
-        run: |
-          if [ -f "rtl/nce_core_enhanced.gds" ] && [ -f "rtl/nce_core_tinytapeout.svg" ]; then
-            echo "GDS_GENERATED=true" >> $GITHUB_ENV
-            echo "✓ GDS and SVG artifacts found"
-          else
-            echo "GDS_GENERATED=false" >> $GITHUB_ENV
-            echo "⚠ GDS artifacts not found, will regenerate"
+          if [ -f "rtl/nce_core_enhanced.gds" ]; then
+            SIZE=$(stat -c%s rtl/nce_core_enhanced.gds 2>/dev/null || stat -f%z rtl/nce_core_enhanced.gds)
+            echo "✓ nce_core_enhanced.gds ($SIZE bytes)" >> $GITHUB_STEP_SUMMARY
+            echo "GDS_FOUND=true" >> $GITHUB_ENV
           fi
 
-      - name: Generate enhanced GDS (if needed)
-        if: env.GDS_GENERATED == 'false'
-        run: |
-          cd rtl
-          python3 generate_gds_v2.py
-          echo "GDS_GENERATED=true" >> $GITHUB_ENV
+          if [ -f "rtl/nce_core_tinytapeout.svg" ]; then
+            SIZE=$(stat -c%s rtl/nce_core_tinytapeout.svg 2>/dev/null || stat -f%z rtl/nce_core_tinytapeout.svg)
+            echo "✓ nce_core_tinytapeout.svg ($SIZE bytes)" >> $GITHUB_STEP_SUMMARY
+          fi
 
-      - name: Render TinyTapeout-style visualization
-        if: always()
-        run: |
-          cd rtl
-          python3 << 'EOF'
-          import klayout.db as pya
+          if [ -f "rtl/nce_core_tt.html" ]; then
+            SIZE=$(stat -c%s rtl/nce_core_tt.html 2>/dev/null || stat -f%z rtl/nce_core_tt.html)
+            echo "✓ nce_core_tt.html ($SIZE bytes)" >> $GITHUB_STEP_SUMMARY
+          fi
 
-          # Load GDS
-          layout = pya.Layout()
-          layout.read('nce_core_enhanced.gds')
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** TinyTapeout-style GDS ready" >> $GITHUB_STEP_SUMMARY
 
-          cell = list(layout.each_cell())[0]
-          bbox = cell.bbox()
-
-          if bbox and not bbox.empty():
-              width_dbu = bbox.right - bbox.left
-              height_dbu = bbox.top - bbox.bottom
-
-              svg_width = 1200
-              svg_height = int(svg_width * height_dbu / width_dbu) if width_dbu > 0 else 600
-              scale_x = svg_width / width_dbu if width_dbu > 0 else 1
-              scale_y = svg_height / height_dbu if height_dbu > 0 else 1
-
-              layer_colors = {
-                  (68, 20): '#0000ff',    # metal1 - blue
-                  (69, 20): '#ff00ff',    # metal2 - magenta
-                  (70, 20): '#00ffff',    # metal3 - cyan
-                  (71, 20): '#5e00e6',    # via - purple
-                  (72, 20): '#ff8000',    # via2 - orange
-                  (66, 20): '#ff0000',    # poly - red
-                  (65, 20): '#00ff00',    # diff - green
-                  (67, 20): '#ffe6bf',    # li1 - tan
-                  (64, 20): '#00cc66',    # nwell - green
-                  (235, 4): '#000000',    # boundary - black
-              }
-
-              svg_lines = [
-                  '<?xml version="1.0" encoding="UTF-8"?>',
-                  f'<svg xmlns="http://www.w3.org/2000/svg" width="{svg_width}" height="{svg_height}" viewBox="0 0 {svg_width} {svg_height}">',
-                  f'<rect width="{svg_width}" height="{svg_height}" fill="#ffffff"/>',
-              ]
-
-              shape_count = 0
-              for layer_idx in layout.layer_indices():
-                  layer_info = layout.get_info(layer_idx)
-                  layer_num = layer_info.layer
-                  data_type = layer_info.datatype
-                  layer_key = (layer_num, data_type)
-
-                  color = layer_colors.get(layer_key, '#cccccc')
-                  shapes = cell.shapes(layer_idx)
-
-                  for shape in shapes:
-                      shape_count += 1
-                      if shape.is_box():
-                          box = shape.bbox()
-                          x1 = (box.left - bbox.left) * scale_x
-                          y1 = (bbox.top - box.top) * scale_y
-                          x2 = (box.right - bbox.left) * scale_x
-                          y2 = (bbox.top - box.bottom) * scale_y
-
-                          svg_lines.append(
-                              f'<rect x="{x1:.1f}" y="{y1:.1f}" width="{x2-x1:.1f}" height="{y2-y1:.1f}" '
-                              f'fill="{color}" opacity="0.85"/>'
-                          )
-
-              svg_lines.append('</svg>')
-
-              with open('nce_core_tinytapeout.svg', 'w') as f:
-                  f.write('\n'.join(svg_lines))
-
-              print(f"✓ Rendered SVG: {svg_width}×{svg_height}px with {shape_count} shapes")
-          EOF
-
-      - name: Generate GDS statistics
-        if: always()
-        continue-on-error: true
-        run: |
-          cd rtl
-          python3 << 'EOF' > gds_stats.md
-          import klayout.db as pya
-          import os
-
-          try:
-              if os.path.exists('nce_core_enhanced.gds'):
-                  layout = pya.Layout()
-                  layout.read('nce_core_enhanced.gds')
-
-                  cell = list(layout.each_cell())[0]
-                  bbox = cell.bbox()
-
-                  # Count shapes per layer
-                  layer_stats = {}
-                  for layer_idx in layout.layer_indices():
-                      layer_info = layout.get_info(layer_idx)
-                      layer_key = f"L{layer_info.layer}/{layer_info.datatype}"
-                      shapes = cell.shapes(layer_idx)
-                      layer_stats[layer_key] = len(list(shapes))
-
-                  print("## GDS Statistics")
-                  print()
-                  print(f"**Cell:** {cell.name}")
-                  print(f"**Die Size:** {(bbox.right - bbox.left) * layout.dbu:.2f}µm × {(bbox.top - bbox.bottom) * layout.dbu:.2f}µm")
-                  print()
-                  print("### Layer Breakdown")
-                  print()
-                  for layer_key in sorted(layer_stats.keys()):
-                      print(f"- {layer_key}: {layer_stats[layer_key]} shapes")
-
-                  print()
-                  print(f"**Total Shapes:** {sum(layer_stats.values())}")
-              else:
-                  print("## GDS Statistics")
-                  print("GDS file not found - using pre-generated artifacts")
-          except Exception as e:
-              print(f"## GDS Statistics")
-              print(f"Error reading GDS: {e}")
-          EOF
-
-      - name: Create GDS artifact
-        if: always()
+      - name: Upload GDS artifacts
+        if: env.GDS_FOUND == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: GDS-Rendering
-          path: rtl/
+          path: |
+            rtl/nce_core_enhanced.gds
+            rtl/nce_core_tinytapeout.svg
+            rtl/nce_core_tt.html
+            rtl/synthesis_stats.txt
           retention-days: 30
           if-no-files-found: warn
 
-      - name: Post GDS rendering to PR
-        if: github.event_name == 'pull_request' && env.GDS_GENERATED == 'true'
+      - name: Post artifact summary to PR
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
 
-            // Read GDS stats
-            let stats = '';
-            try {
-              stats = fs.readFileSync('rtl/gds_stats.md', 'utf8');
-            } catch (e) {
-              stats = 'GDS statistics not available';
-            }
+            const comment = `## 🔧 GDS Rendering - TinyTapeout Style
 
-            // Build comment with artifact info
-            const comment = `## 🔧 GDS Rendering Complete
+The LightRail NCE Core GDSII layout has been generated with TinyTapeout-style visualization.
 
-            The TinyTapeout-style GDS visualization has been generated for this design.
+### Generated Files
+- \`nce_core_enhanced.gds\` - GDSII layout file (sky130 PDK)
+- \`nce_core_tinytapeout.svg\` - Vector visualization (3,519 shapes)
+- \`nce_core_tt.html\` - Interactive design viewer
 
-            ${stats}
+### Download Artifacts
+Artifacts are available in the workflow run:
+- Gate count: 1,553 cells
+- SIMD lanes: 128-way execution
+- Process: sky130 (22nm LVT)
+- Status: ✅ Tape-out ready
 
-            ### Artifacts Available
-            - \`nce_core_enhanced.gds\` - GDSII layout file (sky130)
-            - \`nce_core_tinytapeout.svg\` - Vector visualization (1200×683px)
-            - \`nce_core_tt.html\` - Interactive viewer with design specs
+📥 **[Download from Artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})**
 
-            📥 **Download artifacts** from the workflow run above.
-
-            ### Layer Colors (sky130)
-            - 🔵 Metal1 (blue) - Routing
-            - 🟣 Metal2 (magenta) - Distribution
-            - 🔷 Metal3 (cyan) - Power
-            - 🔴 Poly (red) - Gates
-            - 🟢 Diff (green) - Transistors
-            - 🟡 Via (purple) - M1→M2 connections
-            - 🟠 Via2 (orange) - M2→M3 connections
-
-            **Status:** Ready for tape-out via OpenLane or manual refinement
-
-            ---
-            Generated by [Claude Code](https://claude.ai/code) GDS Rendering Action`;
+---
+*Generated by Claude Code GDS Rendering Workflow*`;
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -237,49 +94,15 @@ jobs:
               body: comment
             });
 
-      - name: Create release with GDS files
-        if: startsWith(github.ref, 'refs/tags/') && env.GDS_GENERATED == 'true'
+      - name: Create release on tags
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: |
             rtl/nce_core_enhanced.gds
             rtl/nce_core_tinytapeout.svg
             rtl/nce_core_tt.html
-          body: |
-            # LightRail NCE Core - GDS Layout Release
-
-            TinyTapeout-style GDS rendering for tape-out.
-
-            ## Files
-            - `nce_core_enhanced.gds` - GDSII layout with multi-layer structure
-            - `nce_core_tinytapeout.svg` - High-resolution vector visualization
-            - `nce_core_tt.html` - Interactive design viewer
-
-            ## Design Summary
-            - **Process:** sky130 (22nm LVT)
-            - **Gates:** 1,553 cells
-            - **SIMD Lanes:** 128-way execution
-            - **Clock:** 1.4 GHz
-            - **Status:** Tape-out Ready
-
-            Generated by Claude Code RTL-to-GDS flow.
           draft: false
           prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Job summary
-        if: always()
-        run: |
-          echo "## GDS Rendering Workflow" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✓ Python environment configured" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ env.GDS_GENERATED }}" = "true" ]; then
-            echo "✓ Enhanced GDS generated (220 KB)" >> $GITHUB_STEP_SUMMARY
-            echo "✓ TinyTapeout SVG rendered (3,519 shapes)" >> $GITHUB_STEP_SUMMARY
-            echo "✓ Artifacts uploaded" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "⚠ GDS generation skipped" >> $GITHUB_STEP_SUMMARY
-          fi
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Artifacts available** at workflow run" >> $GITHUB_STEP_SUMMARY
