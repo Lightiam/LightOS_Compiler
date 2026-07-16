@@ -1,0 +1,30 @@
+# LightRail AI NCE Core - Yosys Synthesis Script
+# Target: sky130 PDK (22nm equivalent)
+
+# Read RTL source files
+read_verilog rtl/nce_core.v
+
+# Hierarchy analysis
+hierarchy -check -top nce_core_top
+
+# Standard optimization and preparation
+proc
+opt_clean
+check
+opt
+
+# Convert to gate-level netlist
+techmap -map +/cmp2lut.v
+opt_clean
+
+# Generate statistics
+tee -o rtl/synthesis_stats.txt stat
+
+# Write out BLIF (format for technology mapping)
+write_blif -attr -cname -conn -impltf -gates rtl/nce_core.blif
+
+# Write JSON netlist
+write_json rtl/nce_core.json
+
+# Write Verilog netlist for inspection
+write_verilog -noattr -noexpr -norename -simple-const rtl/nce_core_netlist.v
