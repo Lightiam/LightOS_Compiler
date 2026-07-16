@@ -23,27 +23,38 @@ jobs:
 
       - name: Verify GDS artifacts
         run: |
+          set -e
           echo "## GDS Artifacts" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
+          echo "Checking repository structure..."
+          ls -la rtl/ | head -20
+
           if [ -f "rtl/nce_core_enhanced.gds" ]; then
-            SIZE=$(stat -c%s rtl/nce_core_enhanced.gds 2>/dev/null || stat -f%z rtl/nce_core_enhanced.gds)
+            SIZE=$(wc -c < rtl/nce_core_enhanced.gds)
             echo "✓ nce_core_enhanced.gds ($SIZE bytes)" >> $GITHUB_STEP_SUMMARY
             echo "GDS_FOUND=true" >> $GITHUB_ENV
+          else
+            echo "✗ nce_core_enhanced.gds not found" >> $GITHUB_STEP_SUMMARY
           fi
 
           if [ -f "rtl/nce_core_tinytapeout.svg" ]; then
-            SIZE=$(stat -c%s rtl/nce_core_tinytapeout.svg 2>/dev/null || stat -f%z rtl/nce_core_tinytapeout.svg)
+            SIZE=$(wc -c < rtl/nce_core_tinytapeout.svg)
             echo "✓ nce_core_tinytapeout.svg ($SIZE bytes)" >> $GITHUB_STEP_SUMMARY
           fi
 
           if [ -f "rtl/nce_core_tt.html" ]; then
-            SIZE=$(stat -c%s rtl/nce_core_tt.html 2>/dev/null || stat -f%z rtl/nce_core_tt.html)
+            SIZE=$(wc -c < rtl/nce_core_tt.html)
             echo "✓ nce_core_tt.html ($SIZE bytes)" >> $GITHUB_STEP_SUMMARY
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** TinyTapeout-style GDS ready" >> $GITHUB_STEP_SUMMARY
+          if [ "$GDS_FOUND" = "true" ]; then
+            echo "**Status:** TinyTapeout-style GDS ready ✅" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Status:** GDS artifacts missing" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
 
       - name: Upload GDS artifacts
         if: env.GDS_FOUND == 'true'
