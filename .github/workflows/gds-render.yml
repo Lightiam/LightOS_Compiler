@@ -33,19 +33,34 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
 
-      - name: Install dependencies
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-klayout
+
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install klayout
 
-      - name: Generate enhanced GDS
+      - name: Check GDS artifacts
+        run: |
+          if [ -f "rtl/nce_core_enhanced.gds" ] && [ -f "rtl/nce_core_tinytapeout.svg" ]; then
+            echo "GDS_GENERATED=true" >> $GITHUB_ENV
+            echo "✓ GDS and SVG artifacts found"
+          else
+            echo "GDS_GENERATED=false" >> $GITHUB_ENV
+            echo "⚠ GDS artifacts not found, will regenerate"
+          fi
+
+      - name: Generate enhanced GDS (if needed)
+        if: env.GDS_GENERATED == 'false'
         run: |
           cd rtl
           python3 generate_gds_v2.py
           echo "GDS_GENERATED=true" >> $GITHUB_ENV
 
       - name: Render TinyTapeout-style visualization
-        if: env.GDS_GENERATED == 'true'
+        if: always()
         run: |
           cd rtl
           python3 << 'EOF'
@@ -119,52 +134,58 @@ jobs:
           EOF
 
       - name: Generate GDS statistics
-        if: env.GDS_GENERATED == 'true'
+        if: always()
+        continue-on-error: true
         run: |
           cd rtl
-          python3 << 'EOF'
+          python3 << 'EOF' > gds_stats.md
           import klayout.db as pya
+          import os
 
-          layout = pya.Layout()
-          layout.read('nce_core_enhanced.gds')
+          try:
+              if os.path.exists('nce_core_enhanced.gds'):
+                  layout = pya.Layout()
+                  layout.read('nce_core_enhanced.gds')
 
-          cell = list(layout.each_cell())[0]
-          bbox = cell.bbox()
+                  cell = list(layout.each_cell())[0]
+                  bbox = cell.bbox()
 
-          # Count shapes per layer
-          layer_stats = {}
-          for layer_idx in layout.layer_indices():
-              layer_info = layout.get_info(layer_idx)
-              layer_key = f"L{layer_info.layer}/{layer_info.datatype}"
-              shapes = cell.shapes(layer_idx)
-              layer_stats[layer_key] = len(list(shapes))
+                  # Count shapes per layer
+                  layer_stats = {}
+                  for layer_idx in layout.layer_indices():
+                      layer_info = layout.get_info(layer_idx)
+                      layer_key = f"L{layer_info.layer}/{layer_info.datatype}"
+                      shapes = cell.shapes(layer_idx)
+                      layer_stats[layer_key] = len(list(shapes))
 
-          print("## GDS Statistics")
-          print()
-          print(f"**Cell:** {cell.name}")
-          print(f"**Die Size:** {(bbox.right - bbox.left) * layout.dbu:.2f}µm × {(bbox.top - bbox.bottom) * layout.dbu:.2f}µm")
-          print()
-          print("### Layer Breakdown")
-          print()
-          for layer_key in sorted(layer_stats.keys()):
-              print(f"- {layer_key}: {layer_stats[layer_key]} shapes")
+                  print("## GDS Statistics")
+                  print()
+                  print(f"**Cell:** {cell.name}")
+                  print(f"**Die Size:** {(bbox.right - bbox.left) * layout.dbu:.2f}µm × {(bbox.top - bbox.bottom) * layout.dbu:.2f}µm")
+                  print()
+                  print("### Layer Breakdown")
+                  print()
+                  for layer_key in sorted(layer_stats.keys()):
+                      print(f"- {layer_key}: {layer_stats[layer_key]} shapes")
 
-          print()
-          print(f"**Total Shapes:** {sum(layer_stats.values())}")
+                  print()
+                  print(f"**Total Shapes:** {sum(layer_stats.values())}")
+              else:
+                  print("## GDS Statistics")
+                  print("GDS file not found - using pre-generated artifacts")
+          except Exception as e:
+              print(f"## GDS Statistics")
+              print(f"Error reading GDS: {e}")
           EOF
-          > gds_stats.md
 
       - name: Create GDS artifact
-        if: env.GDS_GENERATED == 'true'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: GDS-Rendering
-          path: |
-            rtl/nce_core_enhanced.gds
-            rtl/nce_core_tinytapeout.svg
-            rtl/nce_core_tt.html
-            rtl/synthesis_stats.txt
+          path: rtl/
           retention-days: 30
+          if-no-files-found: warn
 
       - name: Post GDS rendering to PR
         if: github.event_name == 'pull_request' && env.GDS_GENERATED == 'true'
