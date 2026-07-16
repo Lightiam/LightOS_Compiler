@@ -13,8 +13,8 @@ opt_clean
 check
 opt
 
-# Convert to gate-level netlist
-techmap -map +/cmp2lut.v
+# Logic synthesis with ABC (ASIC-appropriate gate synthesis)
+abc -g AND,XOR,MUX
 opt_clean
 
 # Generate statistics
@@ -27,4 +27,4 @@ write_blif -attr -cname -conn -impltf -gates rtl/nce_core.blif
 write_json rtl/nce_core.json
 
 # Write Verilog netlist for inspection
-write_verilog -noattr -noexpr -norename -simple-const rtl/nce_core_netlist.v
+write_verilog -noattr -norename rtl/nce_core_netlist.v
