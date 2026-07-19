@@ -1,0 +1,41 @@
+Designator,Quantity,Part Number,Manufacturer,Description,Package,Voltage Rating,Unit Cost,Total Cost,Supplier,Notes
+U1,1,MP5949,Monolithic Power Systems,12-Phase PWM Controller,QFN-48,5V,45.00,45.00,JLCPCB/Digi-Key,Primary PDM controller
+U2,1,MP5949,Monolithic Power Systems,12-Phase PWM Controller (Backup),QFN-48,5V,45.00,45.00,JLCPCB/Digi-Key,Secondary for redundancy
+U3-U26,24,CSD95481RWJ,Texas Instruments,40V/115A Power Stage MOSFET,PK 8x8,40V,15.00,360.00,JLCPCB/Digi-Key,"12 phases, each phase has high + low side"
+U27,1,LR-GEN3-NPU-5NM,LightRail AI,5nm Neural Processor (256 cores),BGA-3136,0.9V/1.2V,3500.00,3500.00,LightRail AI Internal,Main ASIC - Custom silicon
+U28-U39,12,H58M16ABHX,SK Hynix,16GB HBM3 Memory Stack,BGA-1024,1.2V,180.00,2160.00,JLCPCB/Digi-Key,192GB total capacity (12x16GB)
+U40,1,INA3221,Texas Instruments,3-Channel Voltage/Current Monitor,TSSOP-20,3.3V,8.50,8.50,JLCPCB/Digi-Key,Multi-rail power monitoring
+U41,1,NCT6798D,Nuvoton,Thermal Controller & Fan Monitor,QFN-48,3.3V,12.00,12.00,JLCPCB/Digi-Key,Temperature monitoring and fan control
+U42-U43,2,PFB0412SHN,Delta Electronics or Noctua,40mm DC Axial Fan,40x40x20mm,12V,25.00,50.00,JLCPCB/DigiKey,Dual cooling fans with PWM control
+U44,1,SG-531S,NDK,27MHz TCXO Temperature Compensated,7x5mm,3.3V,8.00,8.00,JLCPCB/Digi-Key,Reference oscillator for PLL
+U45-U47,3,LM75,Texas Instruments,Temperature Sensor I2C,TSSOP-8,1.8V/3.3V,2.50,7.50,JLCPCB/Digi-Key,"1 die temp, 2 ambient sensors"
+J1,1,PCI Express x16,Molex,164-pin Edge Connector,PCIe x16,N/A,12.00,12.00,JLCPCB/Digi-Key,Primary power and data input
+J2,1,Molex_5559_8pin,Molex,8-pin PEX Power Connector,Molex 5559,N/A,3.50,3.50,JLCPCB/Digi-Key,Auxiliary power (225W)
+J3,1,Dual Row Header 14pin,generic,14-pin JTAG Test Header,0.1" pitch,1.8V,1.50,1.50,JLCPCB/Digi-Key,Debug interface connector
+F1-F3,3,PTC Fuse,Littelfuse,Polymeric PTC Fuse,1206,N/A,0.75,2.25,JLCPCB/Digi-Key,"12V/15A, 5V/5A, 3.3V/4A protection"
+D1-D4,4,SBD01W,Schottky Diode (40A),Vishay or Onsemi,Dual Schottky 40A,SOT-23,40V,3.00,12.00,JLCPCB/Digi-Key,"OR-ing diodes for power input merging"
+C1-C100,100,100µF/6.3V,Various,MLCC Ceramic Capacitor,1206,6.3V,0.15,15.00,JLCPCB/Digi-Key,Core rail bulk decoupling
+C101-C300,200,10µF/6.3V,Various,MLCC Ceramic Capacitor,0805,6.3V,0.08,16.00,JLCPCB/Digi-Key,Core and memory rail decoupling
+C301-C450,150,2.2µF/6.3V,Various,MLCC Ceramic Capacitor,0603,6.3V,0.05,7.50,JLCPCB/Digi-Key,Secondary decoupling
+C451-C600,150,0.47µF/6.3V,Various,MLCC Ceramic Capacitor,0603,6.3V,0.03,4.50,JLCPCB/Digi-Key,High frequency decoupling
+C601-C700,100,0.1µF/6.3V,Various,MLCC Ceramic Capacitor,0402,6.3V,0.02,2.00,JLCPCB/Digi-Key,"Bypass and AC coupling, PCIe lanes"
+R1-R50,50,2.2kΩ,Various,1% Metal Film Resistor,0603,N/A,0.01,0.50,JLCPCB/Digi-Key,I2C pull-ups and bias resistors
+R51-R100,50,100Ω,Various,1% Metal Film Resistor,0603,N/A,0.01,0.50,JLCPCB/Digi-Key,Termination and soft-start resistors
+R101-R150,50,50Ω,Various,1% Metal Film Resistor,0603,N/A,0.01,0.50,JLCPCB/Digi-Key,Differential pair termination
+R151-R250,100,10Ω,Various,1% Metal Film Resistor,0603,N/A,0.01,1.00,JLCPCB/Digi-Key,Current sense and protection resistors
+L1-L12,12,0.47µH Shielded,Murata or TDK,Power Inductor,1210,N/A,1.20,14.40,JLCPCB/Digi-Key,Core phase inductors (12-phase PDM)
+L13-L15,3,10µH,Murata or TDK,Power Inductor,1206,N/A,0.80,2.40,JLCPCB/Digi-Key,Input filtering inductors
+L16-L30,15,1µH,Murata or TDK,Ferrite Inductor,0805,N/A,0.15,2.25,JLCPCB/Digi-Key,Signal filtering and EMI suppression
+TP1-TP50,50,Test Point Pad,generic,Square Test Point,1mm,N/A,0.10,5.00,JLCPCB/Digi-Key,Measurement and debugging access
+NC1-NC2,2,No Connect,generic,Reserved for Future Use,N/A,N/A,0.00,0.00,N/A,Placeholder for future features
+,,,,,,,,
+Summary,,,,,Subtotal Part Cost,,6379.79,,
+,,,,Estimated Connector/Header Cost,,50.00,,
+,,,,Estimated Miscellaneous (Silkscreen/Assembly),,200.00,,
+,,,,Estimated Shipping/Handling (per unit),,50.00,,
+,,,,TOTAL ESTIMATED PCB+COMPONENTS (per board),,6679.79,,
+,,,,,,
+Note: Pricing based on 2026-07-19 market rates and subject to change. JLCPCB typically offers volume discounts at 10+/50+/100+ quantities.
+Note: LR-GEN3-NPU pricing is internal estimate pending final yield and production volume.
+Note: HBM3 stack pricing assumes JLCPCB direct supplier relationship; retail pricing significantly higher.
+Note: Assembly labor estimated at additional $100-150 per unit for high-complexity BGA placement and testing.

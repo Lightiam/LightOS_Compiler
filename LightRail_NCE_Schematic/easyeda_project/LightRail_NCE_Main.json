@@ -1,0 +1,217 @@
+{
+  "schematic_id": "main_schematic",
+  "title": "LightRail AI NCE - Main System Schematic",
+  "version": "1.0",
+  "date": "2026-07-19",
+  "description": "Neural Computing Engine Motherboard - Complete Block Diagram",
+
+  "design_metadata": {
+    "project": "LightRail AI NCE",
+    "designer": "LightRail AI Engineering",
+    "board_revision": "A",
+    "target_fab": "JLCPCB / Equivalent",
+    "pcb_thickness_mm": 2.4,
+    "pcb_layers": 10,
+    "form_factor": "PCIe x16 Dual-Slot GPU-like Accelerator"
+  },
+
+  "system_architecture": {
+    "description": "Complete modular schematic with hierarchical sheets for each major subsystem",
+    "hierarchy": [
+      {
+        "level": 0,
+        "name": "Top-Level System",
+        "description": "Overall architecture and interconnects between subsystems"
+      },
+      {
+        "level": 1,
+        "sheets": [
+          {
+            "name": "Power Delivery Network (PDN)",
+            "file": "LightRail_NCE_PDN.json",
+            "description": "12-phase PWM controller, power stage MOSFETs, decoupling networks"
+          },
+          {
+            "name": "PCIe Interface & Protection",
+            "file": "LightRail_NCE_PCIe.json",
+            "description": "PCIe x16 edge connector, OR-ing diodes, protection circuits"
+          },
+          {
+            "name": "HBM3 Memory Subsystem",
+            "file": "LightRail_NCE_Memory.json",
+            "description": "12 HBM3 stacks with decoupling and routing"
+          },
+          {
+            "name": "Clock Distribution Network",
+            "file": "LightRail_NCE_Clock.json",
+            "description": "27MHz TCXO, on-chip PLL, clock distribution tree"
+          },
+          {
+            "name": "Thermal Management",
+            "file": "LightRail_NCE_Thermal.json",
+            "description": "Dual fans, heatspreader, temperature monitoring"
+          },
+          {
+            "name": "Debug & Test Access",
+            "file": "LightRail_NCE_Debug.json",
+            "description": "JTAG TAP, boundary scan, I2C monitoring"
+          }
+        ]
+      }
+    ]
+  },
+
+  "block_diagram": {
+    "blocks": [
+      {
+        "id": "pcie_connector",
+        "name": "PCIe x16 Slot",
+        "position": {"x": 50, "y": 100},
+        "size": {"width": 100, "height": 60},
+        "description": "164-pin edge connector (75W max)",
+        "connections": [
+          {"port": "12V_Power", "target": "pdn", "type": "power"},
+          {"port": "5V_Power", "target": "pdn", "type": "power"},
+          {"port": "3.3V_Power", "target": "pdn", "type": "power"},
+          {"port": "TX_Lanes", "target": "asic", "type": "data"},
+          {"port": "RX_Lanes", "target": "asic", "type": "data"}
+        ]
+      },
+      {
+        "id": "pdn",
+        "name": "12-Phase PDM",
+        "position": {"x": 200, "y": 100},
+        "size": {"width": 120, "height": 80},
+        "description": "MP5949 + 24 MOSFETs + 12 inductors",
+        "outputs": [
+          {"name": "Vcore_0.9V", "current_a": 210},
+          {"name": "Vmem_1.2V", "current_a": 75},
+          {"name": "V5", "current_a": 20},
+          {"name": "V3.3", "current_a": 2.5},
+          {"name": "V1.8", "current_a": 1.5}
+        ]
+      },
+      {
+        "id": "asic",
+        "name": "LR-GEN3-NPU",
+        "position": {"x": 380, "y": 100},
+        "size": {"width": 100, "height": 100},
+        "description": "5nm Neural Processor (BGA-3136)",
+        "specifications": {
+          "cores": 256,
+          "tflops_fp32": 1.5,
+          "clock_ghz": 2.4,
+          "power_w": 225
+        },
+        "connections": [
+          {"port": "Vcore", "source": "pdn"},
+          {"port": "Vmem", "source": "pdn"},
+          {"port": "CLK_27MHz", "source": "clock"},
+          {"port": "HBM_Data", "target": "hbm3"},
+          {"port": "PCIe_TX", "target": "pcie"},
+          {"port": "PCIe_RX", "target": "pcie"},
+          {"port": "JTAG", "target": "debug"},
+          {"port": "Thermal_Sense", "target": "thermal"}
+        ]
+      },
+      {
+        "id": "hbm3",
+        "name": "HBM3 Memory",
+        "position": {"x": 500, "y": 100},
+        "size": {"width": 100, "height": 120},
+        "description": "12x 16GB stacks (192GB total)",
+        "specifications": {
+          "stacks": 12,
+          "capacity_gb": 192,
+          "bandwidth_gbs": 256,
+          "voltage": "1.2V"
+        },
+        "connections": [
+          {"port": "Vmem", "source": "pdn"},
+          {"port": "Data[0:1023]", "source": "asic"},
+          {"port": "CLK", "source": "clock"}
+        ]
+      },
+      {
+        "id": "clock",
+        "name": "Clock Distribution",
+        "position": {"x": 50, "y": 250},
+        "size": {"width": 100, "height": 60},
+        "description": "27MHz TCXO + On-chip PLL (x88.9)",
+        "specifications": {
+          "ref_mhz": 27,
+          "out_ghz": 2.4,
+          "jitter_ps": 2
+        },
+        "connections": [
+          {"port": "V3.3", "source": "pdn"},
+          {"port": "CLK_27MHz", "target": "asic"},
+          {"port": "CLK_DDR", "target": "hbm3"}
+        ]
+      },
+      {
+        "id": "thermal",
+        "name": "Thermal Management",
+        "position": {"x": 200, "y": 250},
+        "size": {"width": 120, "height": 80},
+        "description": "Dual fans + 5 sensors + heatspreader",
+        "components": [
+          "2x 40mm DC fans (PWM control)",
+          "5x Temperature sensors (1 die + 4 ambient)",
+          "Aluminum heatspreader (Al 6061-T6)"
+        ],
+        "connections": [
+          {"port": "V5", "source": "pdn"},
+          {"port": "Temp_Sense", "target": "asic"},
+          {"port": "Fan_PWM", "source": "asic"},
+          {"port": "Thermal_Sink", "target": "asic"}
+        ]
+      },
+      {
+        "id": "debug",
+        "name": "Debug/Test Interface",
+        "position": {"x": 380, "y": 250},
+        "size": {"width": 100, "height": 80},
+        "description": "JTAG TAP + I2C monitoring",
+        "interfaces": [
+          "14-pin JTAG (IEEE 1149.1)",
+          "I2C bus (5x monitors, 3x sensors)"
+        ],
+        "connections": [
+          {"port": "V1.8", "source": "pdn"},
+          {"port": "JTAG", "target": "asic"},
+          {"port": "I2C_SDA/SCL", "target": "asic"}
+        ]
+      }
+    ]
+  },
+
+  "signal_summary": {
+    "power_rails": 5,
+    "pcie_lanes": 16,
+    "memory_data_width": 1024,
+    "clock_outputs": 4,
+    "temperature_sensors": 5,
+    "jtag_pins": 4
+  },
+
+  "design_notes": [
+    "Hierarchical schematic with detailed subsystem sheets for manufacturability",
+    "All power planes referenced to ground planes for low inductance",
+    "Differential pair routing for PCIe and memory interfaces",
+    "Comprehensive decoupling strategy across all voltage rails",
+    "Thermal design validated for 225W continuous operation",
+    "Full testability via JTAG and I2C interfaces",
+    "Modeled after NVIDIA RTX GPU reference designs"
+  ],
+
+  "manufacturing_notes": [
+    "BGA placement tolerance: ±0.05mm (Cpk >1.33)",
+    "Micro-bump assembly for HBM3 stacks requires specialized equipment",
+    "X-ray inspection required for BGA/HBM3 solder quality",
+    "Thermal cycling validation: 3 cycles -20 to +80°C",
+    "Assembly sequence: Solder paste → Place (pick & place for passives, manual BGA) → Reflow → Inspection",
+    "Lead-free Pb-free reflow profile, peak 250-260°C",
+    "Workmanship standard: IPC-A-610E Class 2"
+  ]
+}

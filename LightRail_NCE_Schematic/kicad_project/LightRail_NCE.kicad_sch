@@ -1,0 +1,135 @@
+(kicad_sch (version 20230121)
+
+  (uuid "550e8400-e29b-41d4-a716-446655440000")
+
+  (paper "A1")
+  (title_block
+    (title "LightRail AI NCE - Main System Schematic")
+    (date "2026-07-19")
+    (rev "1.0")
+    (comment 1 "Neural Computing Engine Motherboard")
+    (comment 2 "PCIe x16 GPU-like Accelerator")
+    (comment 3 "1.5 TFLOPS FP32 @ 2.4 GHz")
+    (comment 4 "192GB HBM3 Memory, 225W Typical")
+  )
+
+  (lib_symbols
+    (symbol "Connector_PCIe_x16"
+      (pin_names (offset 1.016))
+      (property "Reference" "J" (id 0 0))
+      (property "Value" "PCIe_x16" (id 1 0))
+      (property "Footprint" "" (id 2 0))
+      (symbol "Connector_PCIe_x16_0_1"
+        (rectangle (start -7.62 25.4) (end 7.62 -25.4)
+          (stroke (width 0.254)) (fill (color 0 0 0 0)))
+      )
+      (symbol "Connector_PCIe_x16_1_1"
+        (pin power_in line (at -10.16 22.86 0) (length 2.54) (name "+12V" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "33" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at -10.16 20.32 0) (length 2.54) (name "+12V" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "34" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at -10.16 5.08 0) (length 2.54) (name "+3.3V" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "66" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at 10.16 -22.86 180) (length 2.54) (name "GND" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+      )
+    )
+
+    (symbol "IC_MP5949_PWM"
+      (pin_names (offset 0.127))
+      (property "Reference" "U" (id 0 0))
+      (property "Value" "MP5949" (id 1 0))
+      (property "Footprint" "Package_QFN:QFN-48" (id 2 0))
+      (symbol "IC_MP5949_PWM_0_1"
+        (rectangle (start -12.7 17.78) (end 12.7 -17.78)
+          (stroke (width 0.254)) (fill (color 255 255 255 0)))
+      )
+      (symbol "IC_MP5949_PWM_1_1"
+        (pin input line (at -15.24 15.24 0) (length 2.54) (name "VIN" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin output line (at 15.24 0 180) (length 2.54) (name "PHASE[1..12]" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "20" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin input line (at -15.24 0 0) (length 2.54) (name "VREF" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "10" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at 0 20.32 270) (length 2.54) (name "VDD" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "5" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at 0 -20.32 90) (length 2.54) (name "GND" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "6" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+      )
+    )
+
+    (symbol "IC_LR_GEN3_NPU"
+      (pin_names (offset 0.127))
+      (property "Reference" "U" (id 0 0))
+      (property "Value" "LR-GEN3-NPU-5NM" (id 1 0))
+      (property "Footprint" "Package_BGA:BGA-3136" (id 2 0))
+      (symbol "IC_LR_GEN3_NPU_0_1"
+        (rectangle (start -20.32 25.4) (end 20.32 -25.4)
+          (stroke (width 0.254)) (fill (color 255 255 255 0)))
+      )
+      (symbol "IC_LR_GEN3_NPU_1_1"
+        (pin power_in line (at -22.86 20.32 0) (length 2.54) (name "VDD_CORE" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "A1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at -22.86 15.24 0) (length 2.54) (name "VDD_MEM" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "B1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin input line (at -22.86 0 0) (length 2.54) (name "CLK_27MHZ" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "C1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin bidirectional line (at 22.86 0 180) (length 2.54) (name "HBM3_DATA[0..127]" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "M1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin output line (at 22.86 -10.16 180) (length 2.54) (name "PCIE_TX[0..15]" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "P1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin input line (at 22.86 -15.24 180) (length 2.54) (name "PCIE_RX[0..15]" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "Q1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at 0 27.94 270) (length 2.54) (name "GND" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "R1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+      )
+    )
+
+    (symbol "Memory_HBM3_Stack"
+      (pin_names (offset 0.127))
+      (property "Reference" "U" (id 0 0))
+      (property "Value" "H58M16ABHX" (id 1 0))
+      (property "Footprint" "Package_BGA:BGA-1024" (id 2 0))
+      (symbol "Memory_HBM3_Stack_0_1"
+        (rectangle (start -10.16 12.7) (end 10.16 -12.7)
+          (stroke (width 0.254)) (fill (color 255 255 255 0)))
+      )
+      (symbol "Memory_HBM3_Stack_1_1"
+        (pin power_in line (at -12.7 10.16 0) (length 2.54) (name "VDDQ" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin bidirectional line (at 12.7 5.08 180) (length 2.54) (name "DQ[0..127]" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "100" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin input line (at -12.7 0 0) (length 2.54) (name "CLK" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "200" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at 0 -15.24 90) (length 2.54) (name "VSS" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "300" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+      )
+    )
+  )
+
+  (junction (at 127 73.66) (diameter 0) (color 0 0 0 0) (uuid "junction1"))
+
+  (wire (pts (xy 127 73.66) (xy 152.4 73.66)) (stroke (width 0.254)) (uuid "wire1"))
+  (wire (pts (xy 127 93.98) (xy 127 73.66)) (stroke (width 0.254)) (uuid "wire2"))
+
+  (text "LIGHTRAIL AI NCE - NEURAL COMPUTING ENGINE\nMain System Schematic\n\nSystem Architecture:\n• LR-GEN3-NPU 5nm Processor (256 cores, 1.5 TFLOPS FP32 @ 2.4 GHz)\n• 12x 16GB HBM3 Memory Stacks (192GB total, 256 GB/s bandwidth)\n• 12-Phase PWM Power Delivery (225W typical, 275W peak)\n• Dual PCIe x16 Form Factor with 40mm Cooling Fans\n• Complete Temperature Monitoring & Thermal Management\n\nSubsystems:\n1. Power Delivery Network (PDN) - 0.9V Core, 1.2V Memory, Auxiliary Rails\n2. PCIe Interface - Gen4 x16 with Input Protection\n3. HBM3 Memory Subsystem - 12 Stacks with Decoupling\n4. Clock Distribution - 27MHz TCXO → On-chip PLL → 2.4 GHz\n5. Thermal Management - Dual Fans, Temperature Sensors, PWM Control\n6. Debug Interface - JTAG TAP with Boundary Scan\n7. Power Sequencing - Soft-start, Ramp Control, Fault Protection\n\nSee detailed schematics in separate sheets for each subsystem."
+    (at 60 45.72) (effects (font (size 3.81 3.81) (thickness 0.254)) (justify left)) (uuid "text1"))
+
+  (sheet (at 50.8 149.86) (size 254 152.4) (fields_autoplaced)
+    (stroke (width 0.254)) (fill (color 245 245 245 0.75)) (uuid "sheet_pdn")
+    (property "Sheet name" "1 - Power Delivery System" (id 0 0))
+    (property "Sheet file" "PDN.kicad_sch" (id 1 0))
+  )
+
+  (sheet (at 50.8 304.8) (size 254 152.4) (fields_autoplaced)
+    (stroke (width 0.254)) (fill (color 245 245 245 0.75)) (uuid "sheet_pcie")
+    (property "Sheet name" "2 - PCIe Interface" (id 0 0))
+    (property "Sheet file" "PCIe_Interface.kicad_sch" (id 1 0))
+  )
+
+  (sheet (at 320.04 149.86) (size 254 152.4) (fields_autoplaced)
+    (stroke (width 0.254)) (fill (color 245 245 245 0.75)) (uuid "sheet_memory")
+    (property "Sheet name" "3 - HBM3 Memory Subsystem" (id 0 0))
+    (property "Sheet file" "HBM3_Memory.kicad_sch" (id 1 0))
+  )
+
+  (sheet (at 320.04 304.8) (size 254 152.4) (fields_autoplaced)
+    (stroke (width 0.254)) (fill (color 245 245 245 0.75)) (uuid "sheet_clock")
+    (property "Sheet name" "4 - Clock Distribution" (id 0 0))
+    (property "Sheet file" "Clock_Distribution.kicad_sch" (id 1 0))
+  )
+
+  (sheet (at 589.28 149.86) (size 254 152.4) (fields_autoplaced)
+    (stroke (width 0.254)) (fill (color 245 245 245 0.75)) (uuid "sheet_thermal")
+    (property "Sheet name" "5 - Thermal Management" (id 0 0))
+    (property "Sheet file" "Thermal_Management.kicad_sch" (id 1 0))
+  )
+
+  (sheet (at 589.28 304.8) (size 254 152.4) (fields_autoplaced)
+    (stroke (width 0.254)) (fill (color 245 245 245 0.75)) (uuid "sheet_debug")
+    (property "Sheet name" "6 - Debug Interface" (id 0 0))
+    (property "Sheet file" "Debug_Interface.kicad_sch" (id 1 0))
+  )
+
+  (no_connect (at 127 93.98) (uuid "no_connect1"))
+)

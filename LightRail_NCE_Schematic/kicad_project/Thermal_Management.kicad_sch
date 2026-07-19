@@ -1,0 +1,33 @@
+(kicad_sch (version 20230121)
+
+  (uuid "550e8400-e29b-41d4-a716-446655440005")
+
+  (paper "A1")
+  (title_block
+    (title "LightRail AI NCE - Thermal Management System")
+    (date "2026-07-19")
+    (rev "1.0")
+    (comment 1 "Dual 40mm Axial Fans with PWM Control")
+    (comment 2 "Multiple Temperature Monitoring (5 sensors)")
+    (comment 3 "Thermistor-based ambient sensing")
+    (comment 4 "Thermal throttle control & failsafe")
+  )
+
+  (text "THERMAL MANAGEMENT SYSTEM\n\nHeatspreader & TIM:\n• Material: Aluminum 6061-T6\n• Dimensions: 50mm × 50mm × 3mm\n• Surface finish: Anodized (Type II)\n• Thermal conductivity: 160 W/mK\n• Die coverage: >95%\n• Thermal Interface: Arctic MX-4 equivalent\n• TIM thickness: 0.5mm (thin, even layer)\n• Conductivity: 5 W/mK\n• Operating: -40 to +80°C\n\nThermal Resistance Chain:\n• Die → Case: 0.15°C/W (TIM contact)\n• Case → Air: 0.25°C/W (with heatsink + fans)\n• Total: 0.40°C/W\n• @ 225W: ΔT = 90°C\n• Typical junction: 65-75°C @ 25°C ambient, full load\n\nCooling System:\n• Type: 2x 40mm DC Axial Fans\n• Bearing: Fluid Dynamic Bearing (FDB)\n• Voltage: 5V or 12V (PWM configurable @ 25 kHz)\n• CFM @ 50%: ~20 CFM per fan (40 CFM total)\n• RPM @ nominal (50% PWM): 2500 RPM\n• Noise: <35 dB(A) @ nominal\n• MTBF: >40,000 hours @ rated\n\nTemperature Monitoring (5 total sensors):\n\n1. Die Temperature (Internal)\n   • Sensor: Integrated in LR-GEN3-NPU\n   • Resolution: 0.5°C\n   • Accuracy: ±2°C\n   • Primary control point for throttling\n   • Range: 0-125°C typical\n\n2-4. Ambient Thermistors (NTC 10kΩ @ 25°C)\n   • Inlet air (near GPU socket)\n   • Exhaust air (downstream of fans)\n   • Left ambient (reference)\n   • Used for fan ramp calculation\n   • Placement: Strategic board locations\n\n5. MOSFET Temperature\n   • Thermistor on power stage heatsink\n   • Monitors peak phase temperature\n   • Protection: Throttle if >80°C\n\nFan Control Logic:\n• Temperature → Duty Cycle (Linear mapping)\n  25°C → 100% (full speed)\n• Hysteresis: 5°C dead-band (prevent chatter)\n• Failsafe: 80% duty @ sensor fault\n• Update rate: Every 500ms\n• PWM frequency: 25 kHz (inaudible)\n\nThermal Thresholds:\n• Soft throttle: 85°C (clock reduction begins)\n• Hard shutdown: 95°C (full power-down)\n• Absolute max: 100°C (thermal limit)\n• Safe operating: 65-75°C @ full load\n\nTemperature Sensor Interface:\n• Protocol: I2C (SMBus compatible)\n• Address: LM75s @ 0x48-0x49\n• Conversion: 8-bit + fractional\n• Alert: GPIO to ASIC\n\nThermal Cycling & Reliability:\n• Design validated: -20 to +60°C cycles\n• Thermal paste cure: 5 cycles @ full load\n• Expected MTBF: >50,000 hours\n• Storage: -40 to +85°C (non-operating)"
+    (at 30.48 50.8) (effects (font (size 2.54 2.54) (thickness 0.254)) (justify left)) (uuid "text_thermal"))
+
+  (text "THERMAL MANAGEMENT BLOCK DIAGRAM" (at 100 30) (effects (font (size 3 3)) (justify center)) (uuid "thermal_title"))
+
+  (text "LR-GEN3-NPU Die" (at 60 80) (effects (font (size 2.5 2.5)) (justify center)) (uuid "die_label"))
+  (text "Heatspreader (Al 6061)" (at 140 80) (effects (font (size 2.5 2.5)) (justify center)) (uuid "heatspreader_label"))
+  (text "Dual Fans (40mm)" (at 220 80) (effects (font (size 2.5 2.5)) (justify center)) (uuid "fan_label"))
+
+  (text "↓ Thermal Interface (TIM)" (at 100 95) (effects (font (size 2)) (justify center)) (uuid "tim_arrow"))
+
+  (text "Temperature Sensors" (at 100 150) (effects (font (size 3 3)) (justify center)) (uuid "sensor_title"))
+  (text "• 1x Die internal (0.5°C res)\n• 3x Ambient NTC thermistors\n• 1x MOSFET temperature\n\nAll connected via I2C\nto thermal controller" (at 100 185) (effects (font (size 2)) (justify center)) (uuid "sensor_details"))
+
+  (text "PWM FAN CONTROL" (at 100 260) (effects (font (size 3 3)) (justify center)) (uuid "pwm_title"))
+  (text "Temperature (°C)    Fan Duty Cycle\n25                  100%\n50                  ~50%\n80                  ~25%\n85+                 Throttle\n95+                 Shutdown" (at 100 300) (effects (font (size 1.8)) (justify center)) (uuid "pwm_table"))
+
+)

@@ -1,0 +1,166 @@
+(kicad_sch (version 20230121)
+
+  (uuid "550e8400-e29b-41d4-a716-446655440001")
+
+  (paper "A1")
+  (title_block
+    (title "LightRail AI NCE - Power Delivery Network")
+    (date "2026-07-19")
+    (rev "1.0")
+    (comment 1 "12-Phase PWM Power Delivery System")
+    (comment 2 "Vcore: 0.9V @ 210A | Vmem: 1.2V @ 75A")
+    (comment 3 "Input: PCIe 75W + 8-pin PEX 225W = 300W")
+    (comment 4 "Controller: MP5949 | MOSFETs: CSD95481RWJ")
+  )
+
+  (lib_symbols
+    (symbol "Connector_Molex_PEX_8pin"
+      (pin_names (offset 1.016))
+      (property "Reference" "J" (id 0 0))
+      (property "Value" "PEX_8pin" (id 1 0))
+      (property "Footprint" "Connector_Molex:Molex_5559-08P" (id 2 0))
+      (symbol "Connector_Molex_PEX_8pin_0_1"
+        (rectangle (start -5.08 7.62) (end 5.08 -7.62)
+          (stroke (width 0.254)) (fill (color 0 0 0 0)))
+      )
+      (symbol "Connector_Molex_PEX_8pin_1_1"
+        (pin power_in line (at -7.62 5.08 0) (length 2.54) (name "+12V" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at -7.62 2.54 0) (length 2.54) (name "+12V" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "2" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at -7.62 0 0) (length 2.54) (name "+5V" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "3" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at -7.62 -2.54 0) (length 2.54) (name "+5V" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "4" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at 7.62 5.08 180) (length 2.54) (name "GND" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "5" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at 7.62 2.54 180) (length 2.54) (name "GND" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "6" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at 7.62 0 180) (length 2.54) (name "GND" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "7" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin power_in line (at 7.62 -2.54 180) (length 2.54) (name "GND" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "8" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+      )
+    )
+
+    (symbol "Fuse_PTC"
+      (pin_numbers hide)
+      (pin_names (offset 0))
+      (property "Reference" "F" (id 0 0))
+      (property "Value" "PTC" (id 1 0))
+      (symbol "Fuse_PTC_0_0"
+        (circle (center 0 0) (radius 2.54) (stroke (width 0)) (fill (color 0 0 0 0)))
+      )
+      (symbol "Fuse_PTC_0_1"
+        (polyline (pts (xy -2.54 0.635) (xy 2.54 0.635)) (stroke (width 0.254)))
+        (polyline (pts (xy -2.54 -0.635) (xy 2.54 -0.635)) (stroke (width 0.254)))
+      )
+      (symbol "Fuse_PTC_1_1"
+        (pin passive line (at -5.08 0 0) (length 2.54) (name "~" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin passive line (at 5.08 0 180) (length 2.54) (name "~" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "2" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+      )
+    )
+
+    (symbol "Capacitor"
+      (pin_numbers hide)
+      (pin_names (offset 0.254))
+      (property "Reference" "C" (id 0 0))
+      (property "Value" "C" (id 1 0))
+      (symbol "Capacitor_0_1"
+        (polyline (pts (xy -2.032 -0.762) (xy 2.032 -0.762)) (stroke (width 0.508)))
+        (polyline (pts (xy -2.032 0.762) (xy 2.032 0.762)) (stroke (width 0.508)))
+      )
+      (symbol "Capacitor_1_1"
+        (pin passive line (at 0 3.81 270) (length 3.048) (name "~" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin passive line (at 0 -3.81 90) (length 3.048) (name "~" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "2" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+      )
+    )
+
+    (symbol "Resistor"
+      (pin_numbers hide)
+      (pin_names (offset 0))
+      (property "Reference" "R" (id 0 0))
+      (property "Value" "R" (id 1 0))
+      (symbol "Resistor_0_1"
+        (rectangle (start -1.016 -2.54) (end 1.016 2.54)
+          (stroke (width 0.254)) (fill (color 0 0 0 0)))
+      )
+      (symbol "Resistor_1_1"
+        (pin passive line (at 0 3.81 270) (length 1.27) (name "~" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin passive line (at 0 -3.81 90) (length 1.27) (name "~" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "2" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+      )
+    )
+
+    (symbol "Diode_Schottky"
+      (pin_numbers hide)
+      (pin_names (offset 0))
+      (property "Reference" "D" (id 0 0))
+      (property "Value" "Schottky" (id 1 0))
+      (symbol "Diode_Schottky_0_1"
+        (polyline (pts (xy -1.27 1.27) (xy -1.27 -1.27)) (stroke (width 0.254)))
+        (polyline (pts (xy 1.27 1.27) (xy -1.27 0) (xy 1.27 -1.27)) (stroke (width 0.254)))
+        (polyline (pts (xy 0.762 1.27) (xy 0.762 0.889)) (stroke (width 0.254)))
+        (polyline (pts (xy 1.27 1.27) (xy 1.27 0.889)) (stroke (width 0.254)))
+      )
+      (symbol "Diode_Schottky_1_1"
+        (pin passive line (at -3.81 0 0) (length 2.54) (name "K" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin passive line (at 3.81 0 180) (length 2.54) (name "A" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "2" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+      )
+    )
+
+    (symbol "Inductor"
+      (pin_numbers hide)
+      (pin_names (offset 0))
+      (property "Reference" "L" (id 0 0))
+      (property "Value" "L" (id 1 0))
+      (symbol "Inductor_0_1"
+        (arc (start 0 -2.54) (mid 0.6604 -2.1336) (end 1.27 -2.54)
+          (stroke (width 0.254)) (fill (color 0 0 0 0)))
+        (arc (start 0 -1.524) (mid 0.6604 -1.1176) (end 1.27 -1.524)
+          (stroke (width 0.254)) (fill (color 0 0 0 0)))
+        (arc (start 0 -0.508) (mid 0.6604 -0.1016) (end 1.27 -0.508)
+          (stroke (width 0.254)) (fill (color 0 0 0 0)))
+        (arc (start 0 0.508) (mid 0.6604 0.9144) (end 1.27 0.508)
+          (stroke (width 0.254)) (fill (color 0 0 0 0)))
+        (arc (start 0 1.524) (mid 0.6604 1.9304) (end 1.27 1.524)
+          (stroke (width 0.254)) (fill (color 0 0 0 0)))
+        (arc (start 0 2.54) (mid 0.6604 2.9464) (end 1.27 2.54)
+          (stroke (width 0.254)) (fill (color 0 0 0 0)))
+      )
+      (symbol "Inductor_1_1"
+        (pin passive line (at 0 3.81 270) (length 1.27) (name "~" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "1" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+        (pin passive line (at 0 -3.81 90) (length 1.27) (name "~" (effects (font (size 1.27 1.27) (thickness 0.15)))) (number "2" (effects (font (size 1.27 1.27) (thickness 0.15)))))
+      )
+    )
+  )
+
+  (text "POWER DELIVERY NETWORK (PDN)\n\nInput Stage:\n• PCIe Slot: 12V @ 12.5A (75W max)\n• 8-pin PEX: 12V @ 40A (225W max)\n• Total Budget: 225W typical, 275W peak\n\nPower Distribution:\n• VCore (0.9V): 12-phase parallel, 210A total\n  - MP5949 PWM Controller\n  - 24x CSD95481RWJ MOSFETs (12 high, 12 low)\n  - 12x 0.47µH Phase Inductors\n  - ~600x MLCCs for decoupling\n\n• VMemory (1.2V): Single phase, 75A\n  - Dedicated buck converter\n  - ~150x MLCCs for HBM3 proximity\n\n• V5 (5.0V): Auxiliary LDO\n  - PTC Fuse 15A\n  - Fan/Sensor supply\n\n• V3.3 & V1.8: Secondary LDOs\n  - I/O and Digital Logic supplies\n\nFault Protection:\n• Soft-start: 100Ω resistor, 500ms ramp\n• OCP: >220A peak threshold\n• OVP: >1.0V Vcore shutdown\n• UVLO: <0.8V emergency shutdown\n• Hold-up Capacitors: 1000µF on 12V rail"
+    (at 30.48 50.8) (effects (font (size 2.54 2.54) (thickness 0.254)) (justify left)) (uuid "text_pdn"))
+
+  (junction (at 100 50) (diameter 0) (color 0 0 0 0) (uuid "junc_vcc12"))
+
+  (wire (pts (xy 50 50) (xy 100 50)) (stroke (width 0.5)) (uuid "wire_pex_12v"))
+  (text "+12V INPUT" (at 25 50) (effects (font (size 2 2)) (justify right)) (uuid "label_12v_in"))
+
+  (symbol (at 100 50 0) (uuid "U1_mp5949")
+    (property "Reference" "U1" (id 0 0))
+    (property "Value" "MP5949" (id 1 0))
+  )
+
+  (symbol (at 150 50 0) (uuid "U2_vcore_phase1")
+    (property "Reference" "L1" (id 0 0))
+    (property "Value" "0.47µH Shielded" (id 1 0))
+  )
+
+  (symbol (at 200 50 0) (uuid "C1_vcore_bulk")
+    (property "Reference" "C1-C5" (id 0 0))
+    (property "Value" "100µF/6.3V" (id 1 0))
+  )
+
+  (text "x12 Phase Stages" (at 200 20) (effects (font (size 2 2)) (justify center)) (uuid "label_12phase"))
+
+  (symbol (at 100 100 0) (uuid "U3_vmem")
+    (property "Reference" "U3" (id 0 0))
+    (property "Value" "Buck Converter (1.2V)" (id 1 0))
+  )
+
+  (text "1.2V Memory Rail - 75A Total" (at 150 100) (effects (font (size 2 2)) (justify left)) (uuid "label_vmem"))
+
+  (symbol (at 100 150 0) (uuid "J1_pex")
+    (property "Reference" "J1" (id 0 0))
+    (property "Value" "8-pin PEX Connector" (id 1 0))
+  )
+
+)

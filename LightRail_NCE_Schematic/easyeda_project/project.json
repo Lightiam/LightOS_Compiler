@@ -1,0 +1,331 @@
+{
+  "name": "LightRail AI NCE Motherboard",
+  "description": "Neural Computing Engine - PCIe x16 GPU-like Accelerator with HBM3 Memory",
+  "version": "1.0",
+  "created": "2026-07-19",
+  "updated": "2026-07-19",
+  "author": "LightRail AI Engineering",
+  "license": "Proprietary",
+
+  "project_info": {
+    "title": "LightRail AI NCE - Complete Reference Design",
+    "subtitle": "1.5 TFLOPS FP32 @ 2.4 GHz | 192GB HBM3 | 225W Typical",
+    "board_dimensions": {
+      "length_mm": 267,
+      "width_mm": 111,
+      "thickness_mm": 2.4
+    },
+    "form_factor": "PCIe x16 Dual-Slot",
+    "pcb_layers": 10
+  },
+
+  "system_specifications": {
+    "processing_power": "1.5 TFLOPS FP32 @ 2.4 GHz",
+    "memory": {
+      "type": "HBM3",
+      "capacity_gb": 192,
+      "stacks": 12,
+      "bandwidth_gbs": 256
+    },
+    "power": {
+      "typical_w": 225,
+      "peak_w": 275,
+      "vcore_v": 0.9,
+      "vcore_a": 210,
+      "vmem_v": 1.2,
+      "vmem_a": 75
+    },
+    "thermal": {
+      "typical_temp_c": "65-75",
+      "max_temp_c": 100,
+      "throttle_temp_c": 85,
+      "shutdown_temp_c": 95
+    }
+  },
+
+  "main_subsystems": [
+    {
+      "id": "pdn",
+      "name": "Power Delivery Network",
+      "file": "LightRail_NCE_PDN.sch.json",
+      "description": "12-Phase PWM power delivery, 0.9V core @ 210A, 1.2V memory @ 75A",
+      "key_components": [
+        "MP5949 PWM Controller",
+        "24x CSD95481RWJ MOSFETs",
+        "12x 0.47µH Phase Inductors",
+        "~600 MLCCs for decoupling"
+      ]
+    },
+    {
+      "id": "pcie",
+      "name": "PCIe Interface",
+      "file": "LightRail_NCE_PCIe.sch.json",
+      "description": "PCIe x16 Gen4 edge connector with 75W power delivery and protection",
+      "key_components": [
+        "PCIe x16 edge connector (164-pin)",
+        "Schottky OR-ing diodes (power merging)",
+        "PTC fuses (protection)",
+        "AC coupling capacitors"
+      ]
+    },
+    {
+      "id": "memory",
+      "name": "HBM3 Memory Subsystem",
+      "file": "LightRail_NCE_Memory.sch.json",
+      "description": "12x 16GB HBM3 stacks with 256 GB/s aggregate bandwidth",
+      "key_components": [
+        "12x SK Hynix H58M16ABHX (16GB each)",
+        "~96 MLCC decoupling capacitors",
+        "128-bit data interfaces (1,024 total)",
+        "Source-sync timing network"
+      ]
+    },
+    {
+      "id": "clock",
+      "name": "Clock Distribution",
+      "file": "LightRail_NCE_Clock.sch.json",
+      "description": "27MHz TCXO reference with on-chip PLL (x88.9) to 2.4 GHz",
+      "key_components": [
+        "NDK SG-531S TCXO (27 MHz ±50 ppm)",
+        "On-chip PLL (2.4 GHz output)",
+        "Differential clock routing (100Ω)",
+        "Skew control (<100ps max)"
+      ]
+    },
+    {
+      "id": "thermal",
+      "name": "Thermal Management",
+      "file": "LightRail_NCE_Thermal.sch.json",
+      "description": "Dual 40mm fans with PWM control and temperature monitoring",
+      "key_components": [
+        "2x 40mm DC Axial Fans (Delta/Noctua)",
+        "5x Temperature sensors (1 internal + 4 external)",
+        "Aluminum heatspreader (Al 6061-T6)",
+        "Thermal interface material (Arctic MX-4)"
+      ]
+    },
+    {
+      "id": "debug",
+      "name": "Debug & Test Interface",
+      "file": "LightRail_NCE_Debug.sch.json",
+      "description": "14-pin JTAG with boundary scan and I2C monitoring bus",
+      "key_components": [
+        "14-pin JTAG TAP header (IEEE 1149.1)",
+        "3,136-cell boundary scan chain",
+        "I2C bus (5x INA226 monitors, 3x LM75 sensors)",
+        "Test access points (50+ pads)"
+      ]
+    }
+  ],
+
+  "power_rails": [
+    {
+      "name": "Vcore",
+      "voltage": "0.9V",
+      "tolerance": "±3%",
+      "max_current_a": 210,
+      "source": "12-Phase PDM",
+      "destination": "LR-GEN3-NPU core"
+    },
+    {
+      "name": "Vmem",
+      "voltage": "1.2V",
+      "tolerance": "±3%",
+      "max_current_a": 75,
+      "source": "Buck converter",
+      "destination": "HBM3 memory stacks"
+    },
+    {
+      "name": "V5",
+      "voltage": "5.0V",
+      "tolerance": "±5%",
+      "max_current_a": 20,
+      "source": "PTC fuse + LDO",
+      "destination": "Fan PWM, sensors, aux"
+    },
+    {
+      "name": "V3.3",
+      "voltage": "3.3V",
+      "tolerance": "±5%",
+      "max_current_a": 2.5,
+      "source": "LDO regulator",
+      "destination": "I/O logic, oscillator"
+    },
+    {
+      "name": "V1.8",
+      "voltage": "1.8V",
+      "tolerance": "±5%",
+      "max_current_a": 1.5,
+      "source": "LDO regulator",
+      "destination": "JTAG, I2C, digital logic"
+    }
+  ],
+
+  "connectors": [
+    {
+      "name": "PCIe x16",
+      "type": "Edge connector",
+      "pins": 164,
+      "form_factor": "PCI Express Gen3/Gen4 x16",
+      "power_capacity_w": 75,
+      "data_lanes": 16
+    },
+    {
+      "name": "PEX 8-pin",
+      "type": "Molex 5559",
+      "pins": 8,
+      "power_capacity_w": 225,
+      "voltage": "12V/5V"
+    },
+    {
+      "name": "JTAG",
+      "type": "Dual-row header",
+      "pins": 14,
+      "pitch_mm": 2.54,
+      "voltage": "1.8V LVCMOS"
+    }
+  ],
+
+  "major_ics": [
+    {
+      "reference": "U1-U2",
+      "part_number": "MP5949",
+      "manufacturer": "Monolithic Power Systems",
+      "description": "12-Phase PWM Controller",
+      "package": "QFN-48",
+      "quantity": 2
+    },
+    {
+      "reference": "U3-U26",
+      "part_number": "CSD95481RWJ",
+      "manufacturer": "Texas Instruments",
+      "description": "Power Stage MOSFET (high/low side)",
+      "package": "PK 8×8",
+      "quantity": 24,
+      "note": "12 phases × 2 (high + low)"
+    },
+    {
+      "reference": "U27",
+      "part_number": "LR-GEN3-NPU-5NM",
+      "manufacturer": "LightRail AI",
+      "description": "Main ASIC - Neural Processing Unit",
+      "package": "BGA-3136",
+      "quantity": 1,
+      "note": "256 cores, 1.5 TFLOPS FP32"
+    },
+    {
+      "reference": "U28-U39",
+      "part_number": "H58M16ABHX",
+      "manufacturer": "SK Hynix",
+      "description": "HBM3 Memory Stack (16GB)",
+      "package": "BGA-1024",
+      "quantity": 12,
+      "note": "192GB total capacity"
+    },
+    {
+      "reference": "U40",
+      "part_number": "INA3221",
+      "manufacturer": "Texas Instruments",
+      "description": "3-Channel Voltage/Current Monitor",
+      "package": "TSSOP-20",
+      "quantity": 1,
+      "note": "Multi-rail power monitoring"
+    },
+    {
+      "reference": "U41",
+      "part_number": "NCT6798D",
+      "manufacturer": "Nuvoton",
+      "description": "Thermal Controller & Fan Monitor",
+      "package": "QFN-48",
+      "quantity": 1
+    },
+    {
+      "reference": "U42-U43",
+      "part_number": "PFB0412SHN",
+      "manufacturer": "Delta or Noctua",
+      "description": "40mm DC Axial Fan",
+      "package": "40×40×20mm",
+      "quantity": 2
+    }
+  ],
+
+  "passive_components": {
+    "capacitors": {
+      "total_count": "~600",
+      "voltage_rated": "6.3V-20V",
+      "types": ["MLCCs", "Ceramic", "X7R"],
+      "typical_values": ["100µF", "10µF", "2.2µF", "1µF", "0.47µF", "0.1µF"],
+      "note": "Distributed across PDN and HBM3 decoupling"
+    },
+    "resistors": {
+      "total_count": "~250",
+      "typical_values": ["2.2kΩ", "100Ω", "10Ω", "50Ω", "330Ω"],
+      "types": ["Pull-ups", "Termination", "Current-sense", "Soft-start"]
+    },
+    "inductors": {
+      "total_count": "~50",
+      "types": ["Shielded", "Power", "Ferrite"],
+      "typical_values": ["0.47µH", "1µH", "10µH"],
+      "applications": ["Phase inductors", "Filtering"]
+    }
+  },
+
+  "documentation": {
+    "reference_design": "LightRail_NCE_Reference_Design.html (13 pages)",
+    "board_layout": "MSV373_r9.1_boardview.cad",
+    "asic_spec": "lightrailgen3asicfabspec.pdf",
+    "hdl_manual": "lightrailncehdlmanual.pdf",
+    "gpu_reference": "I_need_materials_to_build_an_ASIC_GPU_from_scratch.pdf"
+  },
+
+  "design_rules": {
+    "trace_width": {
+      "signal": "0.15mm (5mil)",
+      "power": "0.25-0.5mm",
+      "high_current": "0.5-1.0mm"
+    },
+    "spacing": {
+      "signal_to_signal": "0.15mm (5mil)",
+      "signal_to_power": "0.2mm (8mil)",
+      "trace_to_edge": "0.3mm (12mil)"
+    },
+    "vias": {
+      "diameter": "0.3mm (±0.05mm)",
+      "via_per_inch": "1 per square inch (ground)",
+      "escape_via": "0.3mm diameter"
+    },
+    "impedance": {
+      "signal": "50-100Ω (controlled)",
+      "differential": "100Ω ±10% (PCIe, differential pairs)",
+      "memory_clock": "100Ω differential"
+    }
+  },
+
+  "testing": {
+    "manufacturing_test": [
+      "ICT (In-Circuit Test) - 100% of boards",
+      "Thermal cycling - 10% sample (3 cycles)",
+      "Functional test - 100% of boards",
+      "Thermal validation - 100% of boards",
+      "PCIe compliance - Sample testing"
+    ],
+    "test_coverage": "50+ power monitoring pads, 24 observation points, JTAG full boundary scan"
+  },
+
+  "compliance": [
+    "RoHS 3 (Restriction of Hazardous Substances)",
+    "WEEE (Waste Electrical & Electronic Equipment)",
+    "FCC Part 15 Class B (EMC)",
+    "CE EN 55032 (EMC Directive)",
+    "UL 60950-1 / EN 60950-1 (Safety)"
+  ],
+
+  "revision_history": [
+    {
+      "version": "1.0",
+      "date": "2026-07-19",
+      "status": "Engineering Release",
+      "description": "Initial complete reference design with all subsystems"
+    }
+  ]
+}
