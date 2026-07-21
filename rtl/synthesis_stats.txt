@@ -1,0 +1,89 @@
+
+9. Printing statistics.
+
+=== nce_core_top ===
+
+   Number of wires:               1043
+   Number of wire bits:          13037
+   Number of public wires:         656
+   Number of public wire bits:   12619
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                772
+     $add                            1
+     $adffe                        256
+     $eq                           127
+     $logic_and                      1
+     $logic_not                      1
+     $not                            1
+     $reduce_and                   256
+     simd_lane                     128
+     spiking_dispatcher              1
+
+=== simd_lane ===
+
+   Number of wires:                 11
+   Number of wire bits:            181
+   Number of public wires:           8
+   Number of public wire bits:     100
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  7
+     $add                            1
+     $adff                           4
+     $mul                            1
+     $not                            1
+
+=== spiking_dispatcher ===
+
+   Number of wires:                 17
+   Number of wire bits:             45
+   Number of public wires:           9
+   Number of public wire bits:      16
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 14
+     $adffe                          3
+     $and                            1
+     $dlatch                         1
+     $gt                             1
+     $mux                            4
+     $ne                             1
+     $not                            1
+     $reduce_bool                    1
+     $sub                            1
+
+=== design hierarchy ===
+
+   nce_core_top                      1
+     simd_lane                     128
+     spiking_dispatcher              1
+
+   Number of wires:               2468
+   Number of wire bits:          36250
+   Number of public wires:        1689
+   Number of public wire bits:   25435
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               1553
+     $add                          129
+     $adff                         512
+     $adffe                        259
+     $and                            1
+     $dlatch                         1
+     $eq                           127
+     $gt                             1
+     $logic_and                      1
+     $logic_not                      1
+     $mul                          128
+     $mux                            4
+     $ne                             1
+     $not                          130
+     $reduce_and                   256
+     $reduce_bool                    1
+     $sub                            1
+

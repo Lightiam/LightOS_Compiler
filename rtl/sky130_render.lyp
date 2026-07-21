@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layer-properties>
+  <layer-list>
+    <!-- Metal Layers -->
+    <layer>
+      <name>metal1</name>
+      <source>68/20</source>
+      <color>#0000ff</color>
+      <visible>true</visible>
+      <width>1</width>
+      <dither>0</dither>
+      <line-style>solid</line-style>
+      <valid>true</valid>
+      <frame-color>#ffffff</frame-color>
+    </layer>
+
+    <layer>
+      <name>metal2</name>
+      <source>69/20</source>
+      <color>#ff00ff</color>
+      <visible>true</visible>
+      <width>1</width>
+      <valid>true</valid>
+    </layer>
+
+    <layer>
+      <name>metal3</name>
+      <source>70/20</source>
+      <color>#00ffff</color>
+      <visible>true</visible>
+      <width>1</width>
+      <valid>true</valid>
+    </layer>
+
+    <!-- Via Layers -->
+    <layer>
+      <name>via</name>
+      <source>71/20</source>
+      <color>#5e00e6</color>
+      <visible>true</visible>
+      <width>1</width>
+      <valid>true</valid>
+    </layer>
+
+    <layer>
+      <name>via2</name>
+      <source>72/20</source>
+      <color>#ff8000</color>
+      <visible>true</visible>
+      <width>1</width>
+      <valid>true</valid>
+    </layer>
+
+    <!-- Polysilicon -->
+    <layer>
+      <name>poly</name>
+      <source>66/20</source>
+      <color>#ff0000</color>
+      <visible>true</visible>
+      <width>1</width>
+      <valid>true</valid>
+    </layer>
+
+    <!-- Diffusion -->
+    <layer>
+      <name>diff</name>
+      <source>65/20</source>
+      <color>#00ff00</color>
+      <visible>true</visible>
+      <width>1</width>
+      <valid>true</valid>
+    </layer>
+
+    <!-- Local Interconnect (sky130) -->
+    <layer>
+      <name>li1</name>
+      <source>67/20</source>
+      <color>#ffe6bf</color>
+      <visible>true</visible>
+      <width>1</width>
+      <valid>true</valid>
+    </layer>
+
+    <!-- Nwell -->
+    <layer>
+      <name>nwell</name>
+      <source>64/20</source>
+      <color>#00cc66</color>
+      <visible>true</visible>
+      <width>1</width>
+      <valid>true</valid>
+    </layer>
+
+    <!-- Boundary -->
+    <layer>
+      <name>boundary</name>
+      <source>235/4</source>
+      <color>#000000</color>
+      <visible>true</visible>
+      <width>2</width>
+      <valid>true</valid>
+    </layer>
+  </layer-list>
+</layer-properties>
