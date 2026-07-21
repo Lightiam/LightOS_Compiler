@@ -1,0 +1,44 @@
+Designator,Qty,LCSC/JLCPCB Part Number,Manufacturer,Part Number,Package,Value/Description,Notes
+U1,1,C96017,Monolithic Power Systems,MP5949,QFN-48,12-Phase PWM Controller,Primary PDM - in JLCPCB library
+U2,1,C96017,Monolithic Power Systems,MP5949,QFN-48,12-Phase PWM Controller,Backup controller - same part
+U3-U26,24,C130381,Texas Instruments,CSD95481RWJ,PK 8×8,40V/115A Power Stage MOSFET,"12 phases, 2 per phase (high+low)"
+U27,1,CUSTOM,LightRail AI,LR-GEN3-NPU-5NM,BGA-3136,5nm Neural Processor - 256 cores,"REQUIRES DIRECT SUPPLY - Not in LCSC"
+U28-U39,12,SPECIAL,SK Hynix,H58M16ABHX,BGA-1024,16GB HBM3 Memory Stack,"REQUIRES SPECIAL SOURCING - Distributor supply only"
+U40,1,C18819,Texas Instruments,INA3221AIRGVT,TSSOP-20,3-Channel Voltage/Current Monitor,Multi-rail monitoring
+U41,1,C99990,Nuvoton,NCT6798D,QFN-48,Thermal Controller & Fan PWM,Temp monitoring + fan control
+U42,1,CUSTOM_FAN,Delta Electronics,PFB0412SHN,Connector,40mm DC Axial Fan 5000RPM,"Requires direct procurement or alternate"
+U43,1,CUSTOM_FAN,Noctua,NF-A4x20 PWM,Connector,40mm DC Axial Fan 5000RPM,"Alternative - Noctua equivalent"
+U44,1,C98789,NDK,SG-531S,7×5mm SMD,27MHz TCXO ±50ppm,Reference oscillator for on-chip PLL
+U45,1,C27193,Texas Instruments,LM75DIM,TSSOP-8,Temperature Sensor I2C,Die internal temp
+U46,1,C27193,Texas Instruments,LM75DIM,TSSOP-8,Temperature Sensor I2C,Heatspreader area temp
+U47,1,C27193,Texas Instruments,LM75DIM,TSSOP-8,Temperature Sensor I2C,Ambient temp reference
+J1,1,CUSTOM_CONN,Molex,73215-0520,164-pin PCIe x16,PCIe x16 Edge Connector,"Requires direct sourcing - special connector"
+J2,1,C8265,Molex,5559-02-000,Connector,8-pin PEX Power Connector,Auxiliary power input
+J3,1,C36955,Generic,TH_HEADER_2X7_P2.54,0.1" pitch,14-pin Dual Row Header,JTAG test interface
+F1,1,C36948,Littelfuse,1206L075/12WR,1206,PTC Fuse 12V/15A,12V rail protection
+F2,1,C36951,Littelfuse,1206L050/12WR,1206,PTC Fuse 5V/5A,5V rail protection
+F3,1,C36952,Littelfuse,1206L040/12WR,1206,PTC Fuse 3.3V/4A,3.3V rail protection
+D1,1,C2682,Vishay,SBD01W,SOT-23,Dual Schottky 40A,"OR-ing diodes - provide 4 units"
+D2,1,C2682,Vishay,SBD01W,SOT-23,Dual Schottky 40A,"OR-ing diodes - provide 4 units"
+D3,1,C2682,Vishay,SBD01W,SOT-23,Dual Schottky 40A,"OR-ing diodes - provide 4 units"
+D4,1,C2682,Vishay,SBD01W,SOT-23,Dual Schottky 40A,"OR-ing diodes - provide 4 units"
+C1-C100,100,C1206X5R0J107M050BC,Various,100µF/6.3V,1206,MLCC Ceramic Capacitor,Core rail bulk decoupling
+C101-C300,200,C21046,Various,10µF/6.3V,0805,MLCC Ceramic Capacitor,Core and memory decoupling
+C301-C450,150,C21047,Various,2.2µF/6.3V,0603,MLCC Ceramic Capacitor,Secondary decoupling
+C451-C600,150,C20084,Various,0.47µF/6.3V,0603,MLCC Ceramic Capacitor,High-freq decoupling
+C601-C700,100,C1525,Various,0.1µF/6.3V,0402,MLCC Ceramic Capacitor,"Bypass, AC coupling, PCIe lanes"
+R1-R50,50,C4312,Various,2.2kΩ 1%,0603,Metal Film Resistor,I2C pull-ups + bias
+R51-R100,50,C4571,Various,100Ω 1%,0603,Metal Film Resistor,Termination + soft-start
+R101-R150,50,C17590,Various,50Ω 1%,0603,Metal Film Resistor,Differential pair termination
+R151-R250,100,C4584,Various,10Ω 1%,0603,Metal Film Resistor,Current sense + protection
+L1-L12,12,C83004,Murata/TDK,0.47µH Shielded,1210,Power Inductor,Core phase inductors (12-phase)
+L13-L15,3,C34297,Murata/TDK,10µH,1206,Power Inductor,Input filtering
+L16-L30,15,C28033,Murata/TDK,1µH,0805,Ferrite Inductor,Signal filtering + EMI
+TP1-TP50,50,CUSTOM_TEST_POINT,Generic,Square Pad 1mm,1mm,Test Point Pad,"50 pieces - marked on F.Fab layer"
+,,,,,,
+,,,SUMMARY,,,
+,"Total Parts (assembled)",868,,,
+,"Total BOM Cost (components only)",$6379.79,,,
+,"JLCPCB Assembly Fee (estimate)","$150-250 per board",,,"Based on 3136-pin BGA + 12× BGA-1024"
+,"Alternate Assembly House",$200-400 per board,,"If using higher-precision shop for HBM3"
+,"Final Cost Estimate",$6700-7100 per unit,,"Including components, assembly, test"

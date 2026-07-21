@@ -1,0 +1,30 @@
+(kicad_sch (version 20230121)
+
+  (uuid "550e8400-e29b-41d4-a716-446655440006")
+
+  (paper "A1")
+  (title_block
+    (title "LightRail AI NCE - Debug Interface & Test Access")
+    (date "2026-07-19")
+    (rev "1.0")
+    (comment 1 "14-pin JTAG Test Access Port (TAP)")
+    (comment 2 "IEEE 1149.1 Boundary Scan Implementation")
+    (comment 3 "3,136-cell boundary scan chain")
+    (comment 4 "I2C bus for sensor and power monitoring")
+  )
+
+  (text "DEBUG & TEST INTERFACES\n\nJTAG Test Access Port (TAP):\n• Standard: IEEE 1149.1-2013\n• Connector: 14-pin dual-row 0.100\" pitch header\n• Voltage: 1.8V LVCMOS signaling\n• Max clock: 25 MHz TCK\n• Pin layout:\n  - Pins 1-4, 6-7, 9-14: GND (multi-point return)\n  - Pin 5: VCC (1.8V, max 100 mA)\n  - Pin 8: TDO (Test Data Out)\n  - Pin 10: TCK (Test Clock)\n  - Pin 11: TMS (Test Mode Select)\n  - Pin 12: TDI (Test Data In)\n  - Pin 13: TRST# (TAP Reset, optional)\n  - Pin 14: SRST# (System Reset, optional)\n\nSignal Characteristics:\n• Rise/fall time: <10 ns\n• Setup time: >10 ns before TCK\n• Hold time: >5 ns after TCK\n• Drive: 4-8 mA per pin\n• Protection: 33Ω series resistor recommended\n\nBoundary Scan Implementation:\n• Boundary cells: 3,136 (full ring)\n• Scan chain: Complete serial path\n• Cell types: Input, output, bidirectional\n• Scan frequency: 25 MHz maximum\n• Data registers: 32+ bit capture capability\n• Instruction register: 8 bits (8 instruction modes)\n• ID code register: 32 bits (die ID + revision)\n\nTest Instructions:\n• IDCODE (0x01): Read die identification\n  - Includes revision, manufacturer, part number\n  - 32-bit register\n  \n• SAMPLE/PRELOAD (0x03): Observe I/O states\n  - Captures pin states without forcing\n  - 3,136-bit scan chain\n  \n• EXTEST (0x04): Drive I/O pins externally\n  - Forces signal values from JTAG\n  - Allows in-circuit testing without execution\n  - Full 3,136-bit control\n  \n• INTEST (0x05): Internal gate delay testing\n  - Measures propagation delays\n  - Tests internal gate timing\n  \n• BYPASS (0xFF): Minimal 1-bit bypass register\n  - For daisy-chain support\n  - Minimal latency path\n\nTest Coverage:\n• In-Circuit Test (ICT): 50+ power rail monitoring pads\n• Signal observation: 24 critical points\n• Full boundary scan access\n• Thermal sensor I2C interrogation\n• Memory pattern test capability (march-YFFF)\n\nI2C Bus (Shared Monitoring):\n• Protocol: SMBus compatible @ 400 kHz\n• Voltage: 1.8V LVCMOS\n• Pull-ups: 2.2kΩ on SDA/SCL to 3.3V\n• Devices on bus:\n  - 5x INA226 voltage/current monitors\n  - 3x LM75 temperature sensors\n  - Optional STM32L0 management controller\n  \n• Addresses:\n  - INA226 #1: 0x40 (Vcore rail)\n  - INA226 #2: 0x41 (Vmem rail)\n  - INA226 #3: 0x42 (V5 rail)\n  - INA226 #4: 0x43 (V3.3 rail)\n  - INA226 #5: 0x44 (V1.8 rail)\n  - LM75 #1: 0x48 (die temperature)\n  - LM75 #2: 0x49 (ambient sensor)\n  - Management MCU: 0x50 (optional)\n\nFunctional Test Suite:\n✓ PCIe link training (Gen4 x16)\n✓ Memory pattern test (march-YFFF)\n✓ Voltage regulator transient response\n✓ Fan PWM duty-cycle verification\n✓ Temperature sensor accuracy (±2°C)\n✓ Clock frequency verification (2.4 GHz ±0.1%)\n✓ Thermal cycling validation (3 cycles)\n✓ Manufacturing defect testing"
+    (at 30.48 50.8) (effects (font (size 2.54 2.54) (thickness 0.254)) (justify left)) (uuid "text_debug"))
+
+  (text "JTAG TEST ACCESS PORT (14-pin)" (at 100 30) (effects (font (size 3 3)) (justify center)) (uuid "jtag_title"))
+
+  (text "PIN ASSIGNMENT" (at 80 70) (effects (font (size 2.5 2.5)) (justify left)) (uuid "pin_label"))
+  (text "Pin 1-4, 6-7, 9-14: GND\nPin 5: VCC (1.8V)\nPin 8: TDO (out)\nPin 10: TCK (in)\nPin 11: TMS (in)\nPin 12: TDI (in)\nPin 13: TRST# (opt)\nPin 14: SRST# (opt)" (at 100 100) (effects (font (size 2)) (justify left)) (uuid "pin_desc"))
+
+  (text "I2C MONITORING BUS" (at 100 180) (effects (font (size 3 3)) (justify center)) (uuid "i2c_title"))
+  (text "5x INA226 Current/Voltage Monitors\n3x LM75 Temperature Sensors\nOptional STM32L0 Management MCU\n\n400 kHz SMBus Protocol, 1.8V LVCMOS" (at 100 215) (effects (font (size 2)) (justify center)) (uuid "i2c_desc"))
+
+  (text "BOUNDARY SCAN CONFIGURATION" (at 100 280) (effects (font (size 3 3)) (justify center)) (uuid "bscan_title"))
+  (text "• 3,136 cells in full ring\n• 8 instruction modes\n• 32-bit ID register\n• I/O observation & forcing\n• Maximum TCK: 25 MHz" (at 120 315) (effects (font (size 2)) (justify left)) (uuid "bscan_desc"))
+
+)

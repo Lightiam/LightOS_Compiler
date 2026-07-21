@@ -1,0 +1,43 @@
+(kicad_sch (version 20230121)
+
+  (uuid "550e8400-e29b-41d4-a716-446655440004")
+
+  (paper "A1")
+  (title_block
+    (title "LightRail AI NCE - Clock Distribution Network")
+    (date "2026-07-19")
+    (rev "1.0")
+    (comment 1 "Reference: 27MHz TCXO (NDK SG-531S)")
+    (comment 2 "On-chip PLL: x88.9 multiplier → 2.4 GHz core clock")
+    (comment 3 "Clock distribution tree with skew control")
+    (comment 4 "Source-sync timing for HBM3 interfaces")
+  )
+
+  (text "CLOCK DISTRIBUTION ARCHITECTURE\n\nReference Oscillator (TCXO):\n• Device: NDK SG-531S (or equivalent)\n• Frequency: 27.0 MHz ±50 ppm\n• Stability: ±50 ppm over -10 to +70°C\n• Temperature coefficient: ±5 ppm/°C (TCXO compensated)\n• Jitter: <1 ps RMS\n• Supply: 3.3V ±5%\n• Current: ~50 mA typical\n• Output: CMOS/TTL rail-to-rail\n• Package: 7×5mm ceramic (AT-cut)\n• Startup: <100 ms to stability\n• Decoupling: 10µF + 0.1µF within 5mm\n\nOn-Chip PLL (Integrated in LR-GEN3-NPU):\n• Reference: 27 MHz ±50 ppm input\n• Multiplication: ×88.9 (27 MHz × 88.9 = 2.4 GHz)\n• VCO Range: 2.2 - 2.6 GHz\n• Feedback Divider: ÷32\n• Frequency Accuracy: ±0.1%\n• Jitter (period): <2 ps RMS\n• Phase Noise @ 1MHz: <-100 dBc/Hz\n• Duty Cycle: 50% ±5%\n• Lock Time: <10 microseconds\n• Bypass Mode: Available for fallback\n\nClock Domains:\n\n1. Core Clock Domain (2.4 GHz)\n   ├─ Register file clock\n   ├─ ALU / Execution engine\n   ├─ Cache hierarchy\n   ├─ Memory controller\n   └─ Skew control: <50 ps max\n\n2. Memory Clock Domain (2.4 GHz DDR)\n   ├─ CLK (positive differential)\n   ├─ CLK# (negative differential)\n   ├─ CLKQ (quadrature differential)\n   ├─ CLKQ# (quadrature negative)\n   └─ Distributed to all 12 HBM3 stacks\n      • Slew rate: <100 ps rise/fall\n      • Jitter: <3 ps period\n      • Stack skew: <100 ps max\n\nRouting Requirements:\n• 27 MHz Ref: 50Ω single-ended, star routing, <2 vias\n• Core Clock: 100Ω differential, length-matched ±10ps, <4 vias\n• Memory Clock: 100Ω differential, length-matched ±20 mils, <2 vias\n• Guard traces between differential pairs\n• Dedicated clock layers (layers 3, 5, 7)\n• Separate clock ground vias for return path isolation"
+    (at 30.48 50.8) (effects (font (size 2.54 2.54) (thickness 0.254)) (justify left)) (uuid "text_clock"))
+
+  (text "CLOCK DISTRIBUTION TREE" (at 100 30) (effects (font (size 3 3)) (justify center)) (uuid "clock_tree_title"))
+
+  (text "27 MHz TCXO" (at 80 60) (effects (font (size 2.5 2.5)) (justify center)) (uuid "tcxo_label"))
+  (text "↓" (at 80 75) (effects (font (size 2)) (justify center)) (uuid "arrow1"))
+
+  (text "3.3V Supply\n+ Decoupling" (at 50 85) (effects (font (size 2)) (justify center)) (uuid "supply_label"))
+
+  (text "↓" (at 80 95) (effects (font (size 2)) (justify center)) (uuid "arrow2"))
+  (text "On-Chip PLL\n(x88.9 multiplier)" (at 80 110) (effects (font (size 2.5 2.5)) (justify center)) (uuid "pll_label"))
+  (text "2.4 GHz Output" (at 80 130) (effects (font (size 2.5 2.5)) (justify center)) (uuid "output_label"))
+
+  (text "┌─────────────────────────────────────┐" (at 80 145) (effects (font (size 1.5)) (justify center)) (uuid "branch_top"))
+  (text "│                                     │" (at 80 160) (effects (font (size 1.5)) (justify center)) (uuid "branch_mid"))
+  (text "▼                                     ▼" (at 65 175) (effects (font (size 1.5)) (justify center)) (uuid "branch_arrows"))
+
+  (text "Core Clock Domain" (at 50 190) (effects (font (size 2)) (justify center)) (uuid "core_clk_label"))
+  (text "Memory Clock Domain" (at 110 190) (effects (font (size 2)) (justify center)) (uuid "mem_clk_label"))
+
+  (text "• Registers\n• ALU / Exec\n• Caches\n• Skew <50ps" (at 50 225) (effects (font (size 1.8)) (justify center)) (uuid "core_details"))
+  (text "• CLK/CLK#\n• CLKQ/CLKQ#\n• To 12 HBM3 stacks\n• Skew <100ps" (at 110 225) (effects (font (size 1.8)) (justify center)) (uuid "mem_details"))
+
+  (text "JITTER & SKEW SPECIFICATIONS" (at 100 280) (effects (font (size 3 3)) (justify center)) (uuid "jitter_title"))
+  (text "27 MHz: <1 ps RMS  |  Core: <2 ps RMS  |  Memory: <3 ps RMS  |  Stack Skew: <100 ps" (at 100 305) (effects (font (size 2)) (justify center)) (uuid "jitter_specs"))
+
+)

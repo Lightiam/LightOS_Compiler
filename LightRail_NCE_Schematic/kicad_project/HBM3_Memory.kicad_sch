@@ -1,0 +1,30 @@
+(kicad_sch (version 20230121)
+
+  (uuid "550e8400-e29b-41d4-a716-446655440003")
+
+  (paper "A1")
+  (title_block
+    (title "LightRail AI NCE - HBM3 Memory Subsystem")
+    (date "2026-07-19")
+    (rev "1.0")
+    (comment 1 "12x 16GB HBM3 Stacks (192GB Total)")
+    (comment 2 "256 GB/s Aggregate Bandwidth @ 2.4 GHz DDR")
+    (comment 3 "1.2V Supply, 1024 micro-bumps per stack")
+    (comment 4 "Source-sync timing with on-ASIC controller")
+  )
+
+  (text "HBM3 MEMORY SUBSYSTEM\n\nMemory Configuration:\n• 12x SK Hynix H58M16ABHX stacks\n• 16GB per stack (256Mb x 8 dies in series)\n• Stack dimensions: 10.5mm × 13mm × 11.5mm height\n• Micro-bump pitch: 40µm (1,024 bumps per stack)\n• Total capacity: 192GB\n• Effective bandwidth: 256 GB/s @ 2.4 GHz DDR\n\nStack Placement (Top View):\n┌─────────────────────────────────────────────┐\n│ S0    S1    S2    S3    S4    S5           │\n│ (left side, 6 stacks)                      │\n│        LR-GEN3-NPU Die Center               │\n│ S6    S7    S8    S9    S10   S11          │\n│ (right side, 6 stacks)                     │\n└─────────────────────────────────────────────┘\n\nData Interface:\n• Per-stack data width: 128 bits\n• Total data bus: 1,024 bits (12 × 128)\n• Strobe lines: 16 per interface\n• Timing: Source-sync with clock strobe\n• CAS Latency: 12 cycles\n• Refresh: 64ms standard\n\nPower Distribution:\n• Vmem: 1.2V ±3% to all stacks\n• Current: 75A total (5-6A per stack active)\n• Decoupling per stack:\n  - 2x 10µF / 6.3V (within 3mm of bumps)\n  - 2x 2.2µF / 6.3V (adjacent)\n  - 4x 0.47µF / 6.3V (via-stitched to plane)\n• Total: 96 capacitors (~3x 32 per stack group)\n\nSignal Integrity:\n• Address/Command bus: 50Ω termination resistors\n• Data lanes: AC impedance controlled\n• Via density: 1 via per square inch for ground\n• Guard traces between signal groups\n• Length matching: ±5 mils within stack\n\nTiming & Synchronization:\n• Clock distribution from ASIC PLL (2.4 GHz)\n• Differential clock pairs to each stack\n• Skew between stacks: <100 ps maximum\n• Jitter specification: <3 ps RMS\n\nPower Sequencing:\n• Vmem ramp: 1.0V → 1.2V in 10ms\n• Ramp rate: 20 mV/ms\n• Memory PHY initialization: 50-90ms POR\n• JEDEC training sequence: 90-120ms"
+    (at 30.48 50.8) (effects (font (size 2.54 2.54) (thickness 0.254)) (justify left)) (uuid "text_hbm3"))
+
+  (text "12x HBM3 STACKS" (at 100 30) (effects (font (size 3 3)) (justify center)) (uuid "hbm_title"))
+
+  (text "Stack0-5\n(Left)\nGroup A" (at 80 80) (effects (font (size 2.5 2.5)) (justify center)) (uuid "group_a"))
+  (text "Stack6-11\n(Right)\nGroup B" (at 180 80) (effects (font (size 2.5 2.5)) (justify center)) (uuid "group_b"))
+
+  (text "MEMORY DECOUPLING NETWORKS" (at 100 150) (effects (font (size 3 3)) (justify center)) (uuid "decoup_title"))
+  (text "Per-stack: 2x10µF + 2x2.2µF + 4x0.47µF MLCCs\nTotal: ~96 capacitors, organized by stack group" (at 130 175) (effects (font (size 2 2)) (justify left)) (uuid "decoup_desc"))
+
+  (text "SIGNAL ROUTING" (at 100 230) (effects (font (size 3 3)) (justify center)) (uuid "signal_title"))
+  (text "• 128-bit data per stack (1,024 total)\n• 16 strobe lines per interface\n• Address/Command via differential pairs\n• Guard traces between signal groups\n• Length match ±5 mils" (at 130 260) (effects (font (size 2 2)) (justify left)) (uuid "signal_desc"))
+
+)

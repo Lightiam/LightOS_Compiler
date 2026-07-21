@@ -1,0 +1,30 @@
+(kicad_sch (version 20230121)
+
+  (uuid "550e8400-e29b-41d4-a716-446655440002")
+
+  (paper "A1")
+  (title_block
+    (title "LightRail AI NCE - PCIe Interface")
+    (date "2026-07-19")
+    (rev "1.0")
+    (comment 1 "PCIe x16 Gen4 Interface - 75W Power Budget")
+    (comment 2 "16-lane differential pairs, 100 Ohm impedance")
+    (comment 3 "OR-ing diode network for input protection")
+    (comment 4 "AC coupling capacitors on TX/RX lanes")
+  )
+
+  (text "PCIe x16 INTERFACE & CONNECTOR MANAGEMENT\n\nPCIe Slot Specifications:\n• 164-pin edge connector\n• Mechanical: Gen3/Gen4 compatible\n• Electrical: Gen4 16 GT/s per lane capability\n• Power: 12V @ 12.5A + 5V @ 3A + 3.3V @ 3A (75W max)\n\nSignal Routing:\n• TX Lanes 0-15: 10 differential pairs (25 + return pins)\n• RX Lanes 0-15: 10 differential pairs  \n• Reference Clock: 100 MHz differential pair (pins 74-75)\n• Multi-point ground reference: 12 pins for low inductance\n\nInput Protection:\n• OR-ing Schottky diodes on 12V and 5V rails\n  - Merge PCIe slot power with external PEX supply\n  - Forward voltage drop: 0.35V max\n  - Rating: 40A per diode\n  \n• PTC Fuses:\n  - 12V rail: 15A\n  - 5V rail: 5A\n  - 3.3V rail: 4A\n\n• Hold-up Capacitors: 1000µF on 12V (absorb insertion surge)\n• Soft-start Resistor: 100Ω (500ms ramp)\n\nSignal Integrity:\n• Differential impedance: 100Ω ±10%\n• AC coupling: 100nF capacitors on TX pairs\n• Via limiting: <4 vias per signal\n• Length matching: ±20 mils within lane group\n• Guard traces between signal groups\n\nPower Plane Decoupling (PCIe rails):\n• 47µF x2 on +12V (20V ceramic)\n• 10µF on +5V\n• 4.7µF on +3.3V"
+    (at 30.48 50.8) (effects (font (size 2.54 2.54) (thickness 0.254)) (justify left)) (uuid "text_pcie"))
+
+  (text "PCIE x16 EDGE CONNECTOR" (at 100 30) (effects (font (size 3 3)) (justify center)) (uuid "pcie_title"))
+  (text "TX[0:15] ►" (at 150 60) (effects (font (size 2 2)) (justify left)) (uuid "tx_label"))
+  (text "RX[0:15] ◄" (at 150 80) (effects (font (size 2 2)) (justify left)) (uuid "rx_label"))
+  (text "+12V, +5V, +3.3V" (at 150 100) (effects (font (size 2 2)) (justify left)) (uuid "power_label"))
+  (text "GND (multi-pin)" (at 150 120) (effects (font (size 2 2)) (justify left)) (uuid "gnd_label"))
+
+  (text "PROTECTION CIRCUIT" (at 100 160) (effects (font (size 3 3)) (justify center)) (uuid "protect_title"))
+  (text "Schottky OR-ing diodes for power rail merging" (at 130 180) (effects (font (size 2 2)) (justify left)) (uuid "diode_desc"))
+  (text "PTC Fuses for overcurrent protection" (at 130 200) (effects (font (size 2 2)) (justify left)) (uuid "fuse_desc"))
+  (text "Soft-start limiting (100Ω resistor)" (at 130 220) (effects (font (size 2 2)) (justify left)) (uuid "softstart_desc"))
+
+)
